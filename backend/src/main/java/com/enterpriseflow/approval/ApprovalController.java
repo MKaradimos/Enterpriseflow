@@ -25,16 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST endpoints for approval requests. The controller only maps HTTP to service calls; who may submit,
- * decide or cancel a request is decided in {@link ApprovalService}.
- */
+/** Approval endpoints. Permission checks are in ApprovalService. */
 @RestController
 @RequestMapping("/api/v1/approvals")
 @Tag(name = "Approvals")
 public class ApprovalController {
 
-    // Sort properties accepted from the client; anything else is rejected instead of reaching the query.
     private static final Set<String> SORTABLE = Set.of("createdAt", "decidedAt", "status", "type");
 
     private final ApprovalService approvalService;
@@ -69,7 +65,6 @@ public class ApprovalController {
     @PostMapping("/{id}/approve")
     @Operation(summary = "Approve a pending request and apply its effect")
     public ApprovalResponse approve(CurrentUser user, @PathVariable UUID id,
-        // The body is optional when approving: a comment is only mandatory for rejections.
                                     @Valid @RequestBody(required = false) DecisionRequest request) {
         return approvalService.approve(id, user, request == null ? null : request.comment());
     }

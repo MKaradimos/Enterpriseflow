@@ -36,11 +36,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business logic for projects and their teams. Every method first checks access through
- * {@link ProjectAccessService}, then applies the change, writes an audit entry and, where relevant,
- * notifies the affected users, all in one transaction.
- */
+/** Projects and their teams. Access check first, then the change, audit entry and notifications. */
 @Service
 public class ProjectService {
 
@@ -90,13 +86,11 @@ public class ProjectService {
                 memberCounts.getOrDefault(p.getId(), 0L)));
     }
 
-    /** One project; 404 if it does not exist or the caller is not allowed to see it. */
     @Transactional(readOnly = true)
     public ProjectResponse get(UUID projectId, CurrentUser user) {
         return toResponse(access.requireViewable(projectId, user), user);
     }
 
-    /** The project team, in the order people joined. */
     @Transactional(readOnly = true)
     public List<ProjectMemberResponse> members(UUID projectId, CurrentUser user) {
         Project project = access.requireViewable(projectId, user);
@@ -108,7 +102,6 @@ public class ProjectService {
 
     // ---- Commands ---------------------------------------------------------------------------------------
 
-    /** Creates a project; the manager automatically becomes its first member. */
     @Transactional
     public ProjectResponse create(CurrentUser actor, CreateProjectRequest request) {
         if (!actor.canManageProjects()) {
@@ -129,7 +122,6 @@ public class ProjectService {
         return toResponse(project, actor);
     }
 
-    /** Edits the project details (not the budget, which needs an approval). Manager or ADMIN only. */
     @Transactional
     public ProjectResponse update(UUID projectId, CurrentUser actor, UpdateProjectRequest request) {
         Project project = access.requireManageable(projectId, actor);
@@ -143,7 +135,6 @@ public class ProjectService {
         return toResponse(project, actor);
     }
 
-    /** Hands the project to another manager, who is added to the team if needed. ADMIN only. */
     @Transactional
     public ProjectResponse assignManager(UUID projectId, CurrentUser actor, UUID managerId) {
         if (!actor.isAdmin()) {
@@ -159,7 +150,6 @@ public class ProjectService {
         return toResponse(project, actor);
     }
 
-    /** Makes the project read-only and hides it from default lists. */
     @Transactional
     public ProjectResponse archive(UUID projectId, CurrentUser actor) {
         Project project = access.requireManageable(projectId, actor);
@@ -168,7 +158,6 @@ public class ProjectService {
         return toResponse(project, actor);
     }
 
-    /** Brings an archived project back to an editable state. */
     @Transactional
     public ProjectResponse restore(UUID projectId, CurrentUser actor) {
         if (!actor.isAdmin()) {
@@ -180,7 +169,6 @@ public class ProjectService {
         return toResponse(project, actor);
     }
 
-    /** Adds an active user to the team and notifies them. */
     @Transactional
     public ProjectMemberResponse addMember(UUID projectId, CurrentUser actor, UUID userId) {
         Project project = access.requireManageable(projectId, actor);
@@ -203,7 +191,7 @@ public class ProjectService {
         return ProjectMemberResponse.from(member, project.getManager().getId());
     }
 
-    /** Removes a member (never the manager); their open tasks are unassigned through an event. */
+    // The member's open tasks get unassigned via ProjectMemberRemovedEvent.
     @Transactional
     public void removeMember(UUID projectId, CurrentUser actor, UUID userId) {
         Project project = access.requireManageable(projectId, actor);
@@ -217,7 +205,6 @@ public class ProjectService {
 
     // ---- Helpers ----------------------------------------------------------------------------------------
 
-    /** Only active users with the MANAGER or ADMIN role can lead a project. */
     private User requireEligibleManager(UUID userId) {
         User user = userService.findWithRoles(userId);
         if (!user.isActive() || !user.canManageProjects()) {
@@ -244,7 +231,6 @@ public class ProjectService {
                 access.canManage(p, user), p.getCreatedAt(), p.getUpdatedAt());
     }
 
-    /** WHERE clause for the project list: visibility for non-admins plus the optional filters. */
     private static Specification<Project> searchSpec(CurrentUser user, String query, ProjectStatus status,
                                                      boolean includeArchived) {
         return (root, criteria, cb) -> {

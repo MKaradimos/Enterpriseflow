@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Writes audit entries. Business services call {@code record(...)} right after a change, inside their own
- * transaction, so a change and its audit entry are committed or rolled back together.
- */
+/** Writes audit entries inside the caller's transaction. */
 @Service
 public class AuditService {
 
@@ -42,7 +39,6 @@ public class AuditService {
         repository.save(new AuditLog(clock.instant(), actorId, action, entityType, entityId, projectId, safe));
     }
 
-    /** Convenience overload for actions without metadata. */
     @Transactional(propagation = Propagation.MANDATORY)
     public void record(UUID actorId, AuditAction action, AuditEntityType entityType, UUID entityId, UUID projectId) {
         record(actorId, action, entityType, entityId, projectId, Map.of());

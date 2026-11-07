@@ -1,5 +1,3 @@
-// Form controls (input, textarea, select, label) sharing one visual style.
-
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 

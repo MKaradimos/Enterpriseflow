@@ -1,5 +1,3 @@
-// Profile page: edit own name and job title, and change password (which signs the user out everywhere).
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LogOut } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -30,14 +28,12 @@ const passwordFormSchema = z
   })
   .refine((v) => v.newPassword === v.confirm, { path: ['confirm'], message: 'Passwords do not match' })
 
-/** Two forms: profile details and password change. */
 export function ProfilePage() {
   const { user, setUser, logout } = useAuth()
   const navigate = useNavigate()
   const updateProfile = useUpdateProfile()
   const changePassword = useChangePassword()
 
-  // Two independent forms, each with its own validation and submit state.
   const profileForm = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     values: { fullName: user?.fullName ?? '', jobTitle: user?.jobTitle ?? '' },
@@ -47,7 +43,6 @@ export function ProfilePage() {
     defaultValues: { currentPassword: '', newPassword: '', confirm: '' },
   })
 
-  // Rendered only inside protected routes, so the user is normally always present.
   if (!user) return null
 
   const saveProfile = profileForm.handleSubmit(async (values) => {

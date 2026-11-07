@@ -3,5 +3,5 @@ target/
 *.iml
 .vscode/
 
-# Never copy local secrets into an image; configuration is passed at runtime.
+# Keep local secrets out of the image.
 .env*

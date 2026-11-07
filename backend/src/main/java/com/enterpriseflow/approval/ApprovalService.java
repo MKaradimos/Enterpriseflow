@@ -71,10 +71,6 @@ public class ApprovalService {
 
     // ---- Submit -----------------------------------------------------------------------------------------
 
-    /**
-     * Creates a request after the type-specific checks, records it in the audit trail and notifies the people
-     * who can decide it (the project manager for task completion, all active admins for budget changes).
-     */
     @Transactional
     public ApprovalResponse submit(CurrentUser actor, SubmitApprovalRequest request) {
         User requester = userService.findWithRoles(actor.id());
@@ -91,10 +87,7 @@ public class ApprovalService {
         return toResponse(approval, actor);
     }
 
-    /**
-     * Rules for a completion request: only the assignee or the project manager may ask, the task must be marked
-     * as requiring approval, it must already be IN_REVIEW, and only one request per task may be pending.
-     */
+    // Assignee or manager asks, the task must be IN_REVIEW, one pending request at a time.
     private ApprovalRequest taskCompletion(CurrentUser actor, User requester, SubmitApprovalRequest request) {
         if (request.taskId() == null || request.requestedBudget() != null) {
             throw new BadRequestException("A task completion request needs a taskId and no requestedBudget.");
@@ -117,10 +110,7 @@ public class ApprovalService {
         return ApprovalRequest.taskCompletion(task, requester, request.reason());
     }
 
-    /**
-     * Rules for a budget change: only someone who manages the project may ask (a budget is a management decision),
-     * the project must not be archived, and only one budget request per project may be pending.
-     */
+    // Only whoever manages the project can ask for a new budget.
     private ApprovalRequest budgetChange(CurrentUser actor, User requester, SubmitApprovalRequest request) {
         if (request.projectId() == null || request.requestedBudget() == null || request.taskId() != null) {
             throw new BadRequestException("A budget change needs a projectId and a requestedBudget, and no taskId.");
@@ -136,10 +126,6 @@ public class ApprovalService {
 
     // ---- Decide -----------------------------------------------------------------------------------------
 
-    /**
-     * Approves a pending request and applies what it asked for. If two reviewers approve at the same time, the
-     * optimistic lock on the request lets only the first commit succeed; the second gets 409.
-     */
     @Transactional
     public ApprovalResponse approve(UUID id, CurrentUser actor, String comment) {
         ApprovalRequest approval = requireDecidable(id, actor);
@@ -156,10 +142,7 @@ public class ApprovalService {
         return toResponse(approval, actor);
     }
 
-    /**
-     * Rejects a pending request. A comment is mandatory so the requester knows what to fix. Nothing else changes:
-     * a rejected task stays IN_REVIEW and can be reworked and submitted again.
-     */
+    // The requester should know why, so a comment is required.
     @Transactional
     public ApprovalResponse reject(UUID id, CurrentUser actor, String comment) {
         if (comment == null || comment.isBlank()) {
@@ -171,7 +154,6 @@ public class ApprovalService {
         return toResponse(approval, actor);
     }
 
-    /** Lets the requester withdraw their own pending request, e.g. when it was submitted by mistake. */
     @Transactional
     public ApprovalResponse cancel(UUID id, CurrentUser actor) {
         ApprovalRequest approval = requireVisible(id, actor);
@@ -202,7 +184,6 @@ public class ApprovalService {
         return approval;
     }
 
-    /** Audit entry for the decision plus a notification to the requester with the outcome. */
     private void recordDecision(ApprovalRequest approval, CurrentUser actor, AuditAction action) {
         auditService.record(actor.id(), action, AuditEntityType.APPROVAL, approval.getId(),
                 approval.getProject().getId(), Map.of("type", approval.getType(),
@@ -218,7 +199,6 @@ public class ApprovalService {
 
     // ---- Queries ----------------------------------------------------------------------------------------
 
-    /** Paged list for one of the three tabs of the approvals page (mine / to review / all visible). */
     @Transactional(readOnly = true)
     public PageResponse<ApprovalResponse> list(CurrentUser actor, Scope scope, ApprovalStatus status,
                                                Pageable pageable) {
@@ -226,16 +206,12 @@ public class ApprovalService {
                 a -> toResponse(a, actor));
     }
 
-    /** One request, if the caller may see it. */
     @Transactional(readOnly = true)
     public ApprovalResponse get(UUID id, CurrentUser actor) {
         return toResponse(requireVisible(id, actor), actor);
     }
 
-    /**
-     * Visible to admins, to the requester and to members of the request's project. Anyone else gets 404, the same
-     * as for a request that does not exist, so ids cannot be probed.
-     */
+    // 404 for requests the caller can't see, same as for missing ones.
     private ApprovalRequest requireVisible(UUID id, CurrentUser actor) {
         ApprovalRequest approval = approvalRepository.findDetailedById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Approval request", id));
@@ -258,7 +234,6 @@ public class ApprovalService {
         };
     }
 
-    /** Notifies everyone who can decide the request, except the requester themselves. */
     private void notifyReviewers(ApprovalRequest approval) {
         Set<UUID> recipients = new LinkedHashSet<>();
         if (approval.getType() == ApprovalType.TASK_COMPLETION) {
@@ -279,10 +254,7 @@ public class ApprovalService {
         return type == ApprovalType.TASK_COMPLETION ? "task completion" : "budget change";
     }
 
-    /**
-     * Maps to the API response. canDecide / canCancel are computed with the same rules the actions enforce, so
-     * the UI shows only buttons that will actually work for this user.
-     */
+    // canDecide / canCancel use the same rules as the actions, so the UI only shows buttons that work.
     private ApprovalResponse toResponse(ApprovalRequest a, CurrentUser actor) {
         boolean pending = a.getStatus() == ApprovalStatus.PENDING;
         boolean ownRequest = a.getRequester().getId().equals(actor.id());
@@ -294,7 +266,6 @@ public class ApprovalService {
                 a.getCreatedAt(), pending && !ownRequest && isReviewer(a, actor), pending && ownRequest);
     }
 
-    /** WHERE clause for each list scope, always limited to what the caller is allowed to see. */
     private static Specification<ApprovalRequest> scopeSpec(CurrentUser actor, Scope scope, ApprovalStatus status) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

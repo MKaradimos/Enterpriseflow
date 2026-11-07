@@ -1,4 +1,4 @@
-// Building blocks shared by all pages: header, empty / error / loading states, pagination and form fields.
+// Small building blocks every page uses: header, empty/error/loading states, pagination, form fields.
 
 import { AlertCircle, Inbox, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -7,7 +7,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { errorMessage } from '@/lib/api-client'
 import { cn } from '@/lib/utils'
 
-/** Page title, optional description and action buttons. */
 export function PageHeader({
   title,
   description,
@@ -28,7 +27,6 @@ export function PageHeader({
   )
 }
 
-/** Shown when a list has no items, optionally with a call to action. */
 export function EmptyState({
   icon: Icon = Inbox,
   title,
@@ -52,7 +50,6 @@ export function EmptyState({
   )
 }
 
-/** Shows the API error message and an optional retry button. */
 export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
   return (
     <div role="alert" className="flex flex-col items-center justify-center gap-2 px-4 py-12 text-center">
@@ -68,7 +65,6 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
   )
 }
 
-/** Skeleton rows while a list loads. */
 export function LoadingRows({ rows = 5, className }: { rows?: number; className?: string }) {
   return (
     <div className={cn('flex flex-col gap-2 p-4', className)} aria-label="Loading" role="status">
@@ -79,7 +75,6 @@ export function LoadingRows({ rows = 5, className }: { rows?: number; className?
   )
 }
 
-/** Previous / next controls for server-side paging. */
 export function Pagination({
   page,
   totalPages,

@@ -22,9 +22,7 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
- * Spring Security setup for a stateless REST API: JWT bearer tokens for every API call, CSRF protection
- * only for the cookie-based auth endpoints, deny-by-default authorization and JSON (Problem Details) error
- * responses for 401 and 403. {@code @EnableMethodSecurity} enables the {@code @PreAuthorize} checks.
+ * Stateless JWT API. CSRF only on the cookie-based auth endpoints, everything else needs a token.
  */
 @Configuration
 @EnableWebSecurity
@@ -41,7 +39,6 @@ public class SecurityConfig {
      */
     private static final Set<String> CSRF_PROTECTED_PATHS = Set.of(AUTH_BASE + "/refresh", AUTH_BASE + "/logout");
 
-    // Reachable without a token: health checks and API documentation.
     private static final String[] PUBLIC_GET_ENDPOINTS = {
             "/actuator/health/**",
             "/actuator/info",
@@ -51,7 +48,6 @@ public class SecurityConfig {
             AUTH_BASE + "/csrf"
     };
 
-    // Authentication endpoints themselves cannot require an access token.
     private static final String[] PUBLIC_POST_ENDPOINTS = {
             AUTH_BASE + "/register",
             AUTH_BASE + "/login",
@@ -65,7 +61,6 @@ public class SecurityConfig {
         this.problemDetailHandler = problemDetailHandler;
     }
 
-    /** The filter chain applied to every request. */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         RequestMatcher csrfProtected = request ->
@@ -116,7 +111,6 @@ public class SecurityConfig {
         return converter;
     }
 
-    /** BCrypt for password hashes. */
     @Bean
     PasswordEncoder passwordEncoder() {
         // Strength 12 ≈ 250 ms per hash: slow enough to resist offline brute force, fast enough for login.

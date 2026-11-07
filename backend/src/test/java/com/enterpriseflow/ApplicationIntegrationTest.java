@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/** Smoke tests for the running application: health, migrations, reference data, public docs and deny-by-default security. */
+/** Smoke tests: health, migrations, docs and deny-by-default. */
 class ApplicationIntegrationTest extends IntegrationTestSupport {
 
     @Autowired

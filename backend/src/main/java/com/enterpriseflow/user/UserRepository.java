@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-/** User queries, including the checks that protect against locking out the last administrator. */
 public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
 
     // The entity graph loads roles in the same query; without it, each user.getRoles() call would
@@ -21,11 +20,10 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
 
     boolean existsByEmail(String email);
 
-    /** Used to refuse demoting or deactivating the last active administrator. */
+    // Used to make sure the last admin can't be demoted or deactivated.
     @Query("select count(u) from User u join u.roles r where r.name = com.enterpriseflow.user.RoleName.ADMIN and u.active = true")
     long countActiveAdmins();
 
-    /** Reviewers for budget-change requests. */
     @Query("select u from User u join u.roles r where r.name = com.enterpriseflow.user.RoleName.ADMIN and u.active = true")
     List<User> findActiveAdmins();
 }

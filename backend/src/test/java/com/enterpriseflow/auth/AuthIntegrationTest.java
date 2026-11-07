@@ -23,10 +23,7 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-/**
- * Authentication over HTTP: registration, login, token validation (expired, tampered, foreign issuer),
- * refresh-token rotation and reuse detection, CSRF on cookie endpoints, logout, deactivation and password change.
- */
+/** Login, token validation, refresh rotation, CSRF, logout, deactivation and password change. */
 class AuthIntegrationTest extends IntegrationTestSupport {
 
     private static final String COOKIE = "ef_refresh";
@@ -90,7 +87,7 @@ class AuthIntegrationTest extends IntegrationTestSupport {
                         .content(json(Map.of("currentPassword", PASSWORD, "newPassword", newPassword))))
                 .andExpect(status().isNoContent());
 
-        // The password change and the session revocation run in one transaction; both must be persisted.
+        // Regression: the new hash used to be lost when sessions were revoked in the same transaction.
         mockMvc.perform(loginRequest(user.email(), PASSWORD)).andExpect(status().isUnauthorized());
         login(user.email(), newPassword);
     }

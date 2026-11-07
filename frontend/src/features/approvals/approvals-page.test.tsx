@@ -1,5 +1,3 @@
-// Approvals page: confirming decisions, mandatory rejection comments, and showing only allowed actions.
-
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { AxiosResponse } from 'axios'

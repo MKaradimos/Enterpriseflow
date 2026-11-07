@@ -1,5 +1,3 @@
-// Error boundary element used by the router.
-
 import { isRouteErrorResponse, useRouteError } from 'react-router'
 
 /** Catches render errors in any route, so one broken page doesn't blank the whole app. */

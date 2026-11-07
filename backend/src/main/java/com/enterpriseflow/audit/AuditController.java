@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Organization-wide audit search. Restricted to ADMIN at class level; per-entity history for regular users
- * is exposed by the project and task endpoints after their own access checks.
- */
+/** Organization-wide audit search, admins only. Per-item history is served by the project and task endpoints. */
 @RestController
 @RequestMapping("/api/v1/audit-logs")
 @Tag(name = "Audit")

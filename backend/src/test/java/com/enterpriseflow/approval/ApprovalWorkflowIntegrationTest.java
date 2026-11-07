@@ -35,10 +35,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 
-/**
- * End-to-end approval rules against a real database: who may decide, one decision per request, the effects of
- * approving (task completed, budget changed, requester notified) and correctness under concurrent decisions.
- */
+/** Approval rules end to end, including two reviewers deciding at once. */
 class ApprovalWorkflowIntegrationTest extends IntegrationTestSupport {
 
     @Autowired

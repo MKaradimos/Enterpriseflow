@@ -22,7 +22,7 @@ EXPOSE 8080
 # Respect container memory limits instead of the host's RAM.
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0"
 
-# 127.0.0.1 rather than localhost: in Alpine, localhost may resolve to ::1 first, which is not always listening.
+# 127.0.0.1, not localhost: on Alpine localhost can resolve to ::1 first.
 HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=5 \
   CMD wget -qO- http://127.0.0.1:8080/actuator/health/readiness || exit 1
 

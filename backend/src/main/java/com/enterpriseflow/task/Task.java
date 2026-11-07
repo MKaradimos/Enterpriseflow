@@ -17,11 +17,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
-/**
- * A unit of work inside a project. Status changes follow the {@link TaskStatus} state machine; tasks marked
- * {@code requiresApproval} can only reach DONE through an approved TASK_COMPLETION request.
- * Tasks are never deleted, only archived, so their history stays intact.
- */
+/** Never deleted, only archived. Status changes follow TaskStatus. */
 @Entity
 @Table(name = "tasks")
 public class Task extends BaseEntity {
@@ -82,7 +78,6 @@ public class Task extends BaseEntity {
         update(title, description, priority, dueDate, requiresApproval);
     }
 
-    /** Replaces the editable fields. Not allowed on archived tasks or tasks of archived projects. */
     public void update(String title, String description, TaskPriority priority, LocalDate dueDate,
                        boolean requiresApproval) {
         ensureEditable();
@@ -126,7 +121,6 @@ public class Task extends BaseEntity {
         applyStatus(TaskStatus.DONE, now);
     }
 
-    /** Soft delete: the task is hidden from lists but kept for history and audit. */
     public void archive() {
         if (archived) {
             throw new ConflictException("The task is already archived.");
@@ -135,12 +129,10 @@ public class Task extends BaseEntity {
         this.archived = true;
     }
 
-    /** Clears the assignee, e.g. when that person leaves the project. */
     public void unassign() {
         this.assignee = null;
     }
 
-    /** Overdue = has a due date in the past and is not done yet. */
     public boolean isOverdue(LocalDate today) {
         return dueDate != null && status != TaskStatus.DONE && dueDate.isBefore(today);
     }
@@ -149,13 +141,11 @@ public class Task extends BaseEntity {
         return assignee != null && assignee.getId().equals(userId);
     }
 
-    /** Sets the status and keeps {@code completedAt} in sync with DONE. */
     private void applyStatus(TaskStatus target, Instant now) {
         this.status = target;
         this.completedAt = target == TaskStatus.DONE ? now : null;
     }
 
-    /** Guards every mutation: archived tasks and tasks of archived projects are read-only. */
     private void ensureEditable() {
         if (archived) {
             throw new ConflictException("Archived tasks cannot be modified.");

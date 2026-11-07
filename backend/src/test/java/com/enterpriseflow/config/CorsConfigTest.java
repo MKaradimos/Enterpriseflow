@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-/** Verifies that CORS preflight requests succeed only for configured origins. */
 @SpringBootTest(properties = "app.cors.allowed-origins=https://app.example.com")
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

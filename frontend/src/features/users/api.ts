@@ -1,5 +1,3 @@
-// React Query hooks for user administration and for the user's own profile and password.
-
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api-client'
 import { cleanParams, queryKeys } from '@/lib/query'
@@ -12,7 +10,6 @@ export interface UserFilters {
   page: number
 }
 
-/** Paged user list for administrators. */
 export function useUsers(filters: UserFilters) {
   return useQuery({
     queryKey: [...queryKeys.users, 'list', filters],
@@ -37,7 +34,6 @@ function useInvalidateUsers() {
   return () => void queryClient.invalidateQueries({ queryKey: queryKeys.users })
 }
 
-/** Creates a user (admin). */
 export function useCreateUser() {
   const invalidate = useInvalidateUsers()
   return useMutation({
@@ -52,7 +48,6 @@ export function useCreateUser() {
   })
 }
 
-/** Replaces a user's roles (admin). */
 export function useUpdateRoles() {
   const invalidate = useInvalidateUsers()
   return useMutation({
@@ -62,7 +57,6 @@ export function useUpdateRoles() {
   })
 }
 
-/** Activates or deactivates a user (admin). */
 export function useUpdateUserStatus() {
   const invalidate = useInvalidateUsers()
   return useMutation({
@@ -72,7 +66,6 @@ export function useUpdateUserStatus() {
   })
 }
 
-/** Updates the current user's own profile. */
 export function useUpdateProfile() {
   return useMutation({
     mutationFn: async (input: { fullName: string; jobTitle?: string | null }) =>
@@ -80,7 +73,6 @@ export function useUpdateProfile() {
   })
 }
 
-/** Changes the current user's password. */
 export function useChangePassword() {
   return useMutation({
     mutationFn: async (input: { currentPassword: string; newPassword: string }) => {

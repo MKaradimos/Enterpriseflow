@@ -1,5 +1,3 @@
-// Task table shared by the tasks page and the project detail page.
-
 import { AlertTriangle, ShieldCheck } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
 import { PriorityBadge, TaskStatusBadge } from '@/components/status-badges'
@@ -7,7 +5,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { formatDate } from '@/lib/format'
 import type { Task } from '@/types/api'
 
-/** Task rows with status, priority, assignee and due date; overdue tasks are labeled in text. */
 export function TaskTable({
   tasks,
   showProject = true,

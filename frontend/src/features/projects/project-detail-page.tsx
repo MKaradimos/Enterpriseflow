@@ -1,4 +1,4 @@
-// Project detail page: overview, progress, tasks, team, budget request and activity history.
+// Project page: overview, team, tasks, activity.
 
 import { Archive, ArchiveRestore, Banknote, Pencil, Plus } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
@@ -21,7 +21,6 @@ import { useProject, useProjectAction, useProjectActivity } from './api'
 import { MembersPanel } from './members-panel'
 import { ProjectFormDialog } from './project-form-dialog'
 
-/** Loads the project from the URL id and handles loading / error / not-found states. */
 export function ProjectDetailPage() {
   const { projectId = '' } = useParams()
   const project = useProject(projectId)
@@ -38,7 +37,6 @@ export function ProjectDetailPage() {
   return <ProjectDetail key={project.data.id} project={project.data} />
 }
 
-/** The project view itself; management actions depend on `project.canManage` from the server. */
 function ProjectDetail({ project }: { project: NonNullable<ReturnType<typeof useProject>['data']> }) {
   const { isAdmin } = usePermissions()
   const [editOpen, setEditOpen] = useState(false)
@@ -47,12 +45,11 @@ function ProjectDetail({ project }: { project: NonNullable<ReturnType<typeof use
   const [archiveOpen, setArchiveOpen] = useState(false)
   const archive = useProjectAction(project.id, 'archive')
   const restore = useProjectAction(project.id, 'restore')
-  // The project's tasks (newest first) and its audit history, loaded in parallel with the project.
   const tasks = useTasks({ projectId: project.id, page: 0, size: 50, sort: 'createdAt,desc' })
   const activity = useProjectActivity(project.id)
 
   const archived = project.status === 'ARCHIVED'
-  // canManage comes from the server; archived projects are read-only for everyone.
+  // Archived projects are read-only for everyone.
   const canEdit = project.canManage && !archived
 
   return (
@@ -75,7 +72,6 @@ function ProjectDetail({ project }: { project: NonNullable<ReturnType<typeof use
                 </Button>
               </>
             )}
-            {/* Only administrators can bring an archived project back. */}
             {archived && isAdmin && (
               <Button
                 variant="outline"

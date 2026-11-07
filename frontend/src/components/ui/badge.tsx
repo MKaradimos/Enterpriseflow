@@ -1,5 +1,3 @@
-// Small label component with color variants (base UI primitive).
-
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'

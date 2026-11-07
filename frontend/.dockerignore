@@ -2,5 +2,5 @@ node_modules
 dist
 coverage
 
-# Never copy local secrets into an image; configuration is passed at runtime.
+# Keep local secrets out of the image.
 .env*

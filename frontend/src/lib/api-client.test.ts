@@ -1,5 +1,3 @@
-// API client error handling: Problem Details parsing and friendly messages for network failures.
-
 import { AxiosError, AxiosHeaders, type AxiosAdapter } from 'axios'
 import { describe, expect, it } from 'vitest'
 import { api, ApiError, errorMessage } from './api-client'

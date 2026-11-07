@@ -29,7 +29,6 @@ public class ProjectAccessService {
         this.memberRepository = memberRepository;
     }
 
-    /** Loads a project the caller may see, or throws 404 (also when it exists but is not visible). */
     @Transactional(readOnly = true)
     public Project requireViewable(UUID projectId, CurrentUser user) {
         Project project = projectRepository.findWithManagerById(projectId)
@@ -40,7 +39,7 @@ public class ProjectAccessService {
         return project;
     }
 
-    /** Loads a project the caller may change: 404 if they cannot see it, 403 if they can see but not manage it. */
+    // 404 if you can't see the project, 403 if you can see it but don't manage it.
     @Transactional(readOnly = true)
     public Project requireManageable(UUID projectId, CurrentUser user) {
         Project project = requireViewable(projectId, user);
@@ -50,17 +49,14 @@ public class ProjectAccessService {
         return project;
     }
 
-    /** Admins see every project; everyone else only the projects they are a member of. */
     public boolean canView(Project project, CurrentUser user) {
         return user.isAdmin() || isMember(project.getId(), user.id());
     }
 
-    /** Admins manage every project; otherwise only the project's own manager. */
     public boolean canManage(Project project, CurrentUser user) {
         return user.isAdmin() || project.isManagedBy(user.id());
     }
 
-    /** Single existence query; used for visibility checks and to validate task assignees. */
     public boolean isMember(UUID projectId, UUID userId) {
         return memberRepository.existsByProjectIdAndUserId(projectId, userId);
     }

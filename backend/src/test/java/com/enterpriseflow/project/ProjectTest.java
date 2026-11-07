@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/** Unit tests for the Project aggregate's invariants (membership, archiving, dates, progress). No Spring context. */
 class ProjectTest {
 
     private User manager;

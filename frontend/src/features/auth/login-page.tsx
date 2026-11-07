@@ -1,5 +1,3 @@
-// Login page with client-side validation; after login the user returns to the page they first requested.
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Workflow } from 'lucide-react'
 import { useState } from 'react'
@@ -13,7 +11,6 @@ import { Input } from '@/components/ui/input'
 import { ApiError, errorMessage } from '@/lib/api-client'
 import { useAuth } from './use-auth'
 
-// Client-side checks only for fast feedback; the server validates again.
 const loginSchema = z.object({
   email: z.email('Enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
@@ -21,7 +18,6 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>
 
-/** Email / password form. Wrong credentials show one generic message, like the server. */
 export function LoginPage() {
   const { status, login } = useAuth()
   const navigate = useNavigate()
@@ -34,10 +30,9 @@ export function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema), defaultValues: { email: '', password: '' } })
 
-  // The page the user tried to open before being sent to login (set by RequireAuth).
+  // Where the user was headed before RequireAuth sent them here.
   const from = (location.state as { from?: string } | null)?.from ?? '/'
 
-  // Already signed in (e.g. opened /login in a new tab): go straight on.
   if (status === 'authenticated') {
     return <Navigate to={from} replace />
   }

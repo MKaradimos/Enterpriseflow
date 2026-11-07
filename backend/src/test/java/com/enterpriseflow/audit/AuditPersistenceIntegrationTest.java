@@ -15,7 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.IllegalTransactionStateException;
 
-/** Database-level guarantees: audit entries are written with each change, cannot be altered, and emails are unique ignoring case. */
+/** Checks the guarantees enforced by the database itself. */
 class AuditPersistenceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired

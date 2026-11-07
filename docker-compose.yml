@@ -1,9 +1,6 @@
 # Local development and demo stack. For a production-like setup, add docker-compose.prod.yml:
 #   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-#
-# Host ports come from .env (see .env.example) so they can be changed without editing this file.
-# Containers always talk to each other on their internal ports (postgres:5432, backend:8080), so changing a
-# host port never requires changing application configuration.
+# Host ports come from .env. Containers talk to each other on the internal ports, so changing them is safe.
 name: enterpriseflow
 
 services:
@@ -15,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (run ./scripts/setup-env.sh)}
     ports:
       # Bound to localhost only: reachable from your machine (psql, IDE), never from the network.
-      # 5433 instead of 5432 so it never collides with a PostgreSQL installed directly on the machine.
+      # 5433 so it doesn't clash with a local PostgreSQL.
       - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -29,7 +26,7 @@ services:
     build: ./backend
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev,demo}
-      # Internal network address: the container port, not the host port above.
+      # Internal address, not the host port.
       DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-enterpriseflow}
       DB_USERNAME: ${POSTGRES_USER:-enterpriseflow}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -51,7 +48,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      # nginx serves the SPA and proxies /api to backend:8080, so the browser only ever sees this one origin.
+      # nginx serves the app and proxies /api, so the browser only talks to one origin.
       - "127.0.0.1:${FRONTEND_PORT:-3000}:8080"
     depends_on:
       backend:

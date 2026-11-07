@@ -16,10 +16,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * An account in the organization. Emails are unique and stored in lower case; only the BCrypt hash of the
- * password is stored. Users are deactivated rather than deleted, so their history stays attributable.
- */
+/** Deactivated rather than deleted, so history still points at a real user. */
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity {
@@ -85,18 +82,15 @@ public class User extends BaseEntity {
         return roles.stream().map(Role::getName).collect(Collectors.toUnmodifiableSet());
     }
 
-    /** Fields a user may change on their own profile. */
     public void updateProfile(String fullName, String jobTitle) {
         this.fullName = fullName.trim();
         this.jobTitle = jobTitle == null || jobTitle.isBlank() ? null : jobTitle.trim();
     }
 
-    /** Expects an already hashed password; hashing happens in the service. */
     public void changePassword(String newPasswordHash) {
         this.passwordHash = newPasswordHash;
     }
 
-    /** Replaces all roles at once (admin action). */
     public void replaceRoles(Collection<Role> newRoles) {
         roles.clear();
         roles.addAll(newRoles);
@@ -106,7 +100,6 @@ public class User extends BaseEntity {
         this.active = true;
     }
 
-    /** A deactivated user can no longer log in or refresh tokens. */
     public void deactivate() {
         this.active = false;
     }

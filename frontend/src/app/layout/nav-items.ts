@@ -1,5 +1,3 @@
-// Sidebar navigation entries and breadcrumb labels, with optional role restrictions per entry.
-
 import {
   Bell,
   CheckSquare,

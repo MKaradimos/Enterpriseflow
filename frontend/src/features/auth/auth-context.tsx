@@ -1,4 +1,4 @@
-// Authentication state for the whole app: restores the session on load, and exposes login / logout.
+// Holds the signed-in user and restores the session from the refresh cookie on load.
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
@@ -6,7 +6,6 @@ import * as client from '@/lib/api-client'
 import type { User } from '@/types/api'
 import { AuthContext, type AuthContextValue, type AuthStatus } from './use-auth'
 
-/** Provides the current user and auth actions to the whole component tree. */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   const [status, setStatus] = useState<AuthStatus>('loading')

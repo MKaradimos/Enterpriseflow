@@ -1,5 +1,4 @@
-// Route table: public login page, then protected routes inside the app layout. Admin-only pages are
-// additionally wrapped in RequireRole.
+// All routes. Everything except /login sits behind RequireAuth.
 
 import type { RouteObject } from 'react-router'
 import { ApprovalsPage } from '@/features/approvals/approvals-page'

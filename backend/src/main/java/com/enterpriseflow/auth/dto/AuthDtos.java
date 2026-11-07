@@ -9,17 +9,14 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
 
-/** Request and response bodies of the authentication endpoints. */
 public final class AuthDtos {
 
     private AuthDtos() {
     }
 
-    /** Credentials for POST /auth/login. */
     public record LoginRequest(@NotBlank @Email String email, @NotBlank String password) {
     }
 
-    /** Self-registration data; the password must satisfy the same policy as admin-created accounts. */
     public record RegisterRequest(
             @NotBlank @Email @Size(max = 254) String email,
             @NotBlank @Size(max = 120) String fullName,
@@ -38,7 +35,6 @@ public final class AuthDtos {
         }
     }
 
-    /** CSRF token and the header name the client must send it in (for /refresh and /logout). */
     public record CsrfResponse(String token, String headerName) {
     }
 }

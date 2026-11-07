@@ -1,5 +1,3 @@
-// Card container and its header / title / description / content parts (base UI primitives).
-
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 

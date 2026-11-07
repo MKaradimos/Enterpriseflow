@@ -13,7 +13,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
-/** Request and response bodies of the projects API. */
 public final class ProjectDtos {
 
     private ProjectDtos() {
@@ -43,11 +42,9 @@ public final class ProjectDtos {
             LocalDate dueDate) {
     }
 
-    /** Hands a project over to another manager (ADMIN only). */
     public record AssignManagerRequest(@NotNull UUID managerId) {
     }
 
-    /** Adds an existing, active user to the project team. */
     public record AddMemberRequest(@NotNull UUID userId) {
     }
 
@@ -58,7 +55,6 @@ public final class ProjectDtos {
                                   boolean canManage, Instant createdAt, Instant updatedAt) {
     }
 
-    /** One team member; {@code manager} marks the project's manager in the member list. */
     public record ProjectMemberResponse(UUID userId, String fullName, String email, boolean manager,
                                         Instant joinedAt) {
 
@@ -69,7 +65,6 @@ public final class ProjectDtos {
         }
     }
 
-    /** Rounded completion percentage; 0 for a project without tasks. */
     public static int progressPercent(long total, long done) {
         return total == 0 ? 0 : (int) Math.round(done * 100.0 / total);
     }

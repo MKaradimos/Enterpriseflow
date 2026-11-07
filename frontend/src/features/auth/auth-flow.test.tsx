@@ -1,5 +1,3 @@
-// Login flow and role-aware navigation, tested through the real route tree with a mocked API client.
-
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { AxiosResponse } from 'axios'

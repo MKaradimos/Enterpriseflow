@@ -1,5 +1,4 @@
-// Application shell for signed-in users: sidebar navigation, header (breadcrumbs, theme toggle,
-// notification bell, user menu) and the outlet where the current page renders.
+// Shell around every signed-in page: sidebar, header, page outlet.
 
 import { Bell, ChevronRight, LogOut, Menu, Moon, Sun, UserCircle, Workflow, X } from 'lucide-react'
 import { useState } from 'react'
@@ -20,7 +19,6 @@ import { cn } from '@/lib/utils'
 import { navItems, sectionLabels } from './nav-items'
 import { useTheme } from './theme'
 
-/** Layout around every protected page. The sidebar collapses into a drawer on small screens. */
 export function AppLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
@@ -120,7 +118,6 @@ function SidebarNav({ onNavigate }: { onNavigate: () => void }) {
   )
 }
 
-/** Breadcrumbs derived from the current URL. */
 function Breadcrumbs() {
   const { pathname } = useLocation()
   const [section, detail] = pathname.split('/').filter(Boolean)
@@ -154,7 +151,6 @@ function Breadcrumbs() {
   )
 }
 
-/** Switches between light and dark theme. */
 function ThemeToggle() {
   const { theme, toggle } = useTheme()
   return (
@@ -169,7 +165,6 @@ function ThemeToggle() {
   )
 }
 
-/** Bell icon with the unread notifications count. */
 function NotificationBell() {
   const { data: count = 0 } = useUnreadCount()
   return (
@@ -190,7 +185,6 @@ function NotificationBell() {
   )
 }
 
-/** Current user's name and roles, with links to the profile and logout. */
 function UserMenu() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()

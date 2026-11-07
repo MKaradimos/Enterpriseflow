@@ -1,5 +1,3 @@
-// Timeline of audit entries (who did what and when), used on project and task detail pages.
-
 import { EmptyState, ErrorState, LoadingRows } from '@/components/page'
 import { formatDateTime, humanize } from '@/lib/format'
 import type { AuditEntry } from '@/types/api'

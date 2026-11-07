@@ -88,7 +88,6 @@ public class RefreshTokenService {
         repository.revokeAllForUser(userId, clock.instant());
     }
 
-    /** Generates 256 random bits, stores their hash with an expiry and returns the raw value for the cookie. */
     private IssuedToken issueInFamily(User user, UUID familyId) {
         byte[] bytes = new byte[TOKEN_BYTES];
         secureRandom.nextBytes(bytes);

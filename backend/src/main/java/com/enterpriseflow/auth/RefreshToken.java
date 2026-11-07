@@ -14,9 +14,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * A refresh token as stored in the database. Only the SHA-256 hash is kept, never the raw token.
- * Tokens issued from the same login share a {@code familyId}: each refresh revokes the current token and
- * records its successor in {@code replacedById}. Reusing a revoked token revokes the whole family.
+ * Stored refresh token (hash only). Tokens from one login share a family; reusing an old one kills the family.
  */
 @Entity
 @Table(name = "refresh_tokens")
@@ -68,7 +66,6 @@ public class RefreshToken {
         return !now.isBefore(expiresAt);
     }
 
-    /** Marks the token as used or revoked; {@code replacedBy} is null when it was revoked without rotation. */
     void revoke(Instant now, UUID replacedBy) {
         this.revokedAt = now;
         this.replacedById = replacedBy;

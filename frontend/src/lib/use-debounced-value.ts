@@ -1,5 +1,3 @@
-// Debounce hook for search inputs.
-
 import { useEffect, useState } from 'react'
 
 /** Delays a fast-changing value (e.g. a search box) so the API isn't called on every keystroke. */

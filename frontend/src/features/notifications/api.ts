@@ -1,11 +1,8 @@
-// React Query hooks for notifications: list, unread count (polled) and mark as read.
-
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api-client'
 import { queryKeys } from '@/lib/query'
 import type { Notification, Page } from '@/types/api'
 
-/** Paged notifications of the current user. */
 export function useNotifications(page: number, unreadOnly: boolean) {
   return useQuery({
     queryKey: [...queryKeys.notifications, 'list', { page, unreadOnly }],
@@ -24,7 +21,6 @@ export function useUnreadCount() {
   })
 }
 
-/** Marks one notification, or all of them, as read. */
 export function useMarkRead() {
   const queryClient = useQueryClient()
   return useMutation({

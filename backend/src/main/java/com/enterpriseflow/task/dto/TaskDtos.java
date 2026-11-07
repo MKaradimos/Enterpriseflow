@@ -11,13 +11,11 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
-/** Request and response bodies of the tasks API. */
 public final class TaskDtos {
 
     private TaskDtos() {
     }
 
-    /** A new task; the assignee, if given, must be a member of the project. */
     public record CreateTaskRequest(
             @NotBlank @Size(max = 200) String title,
             @Size(max = 10000) String description,
@@ -37,11 +35,9 @@ public final class TaskDtos {
             boolean requiresApproval) {
     }
 
-    /** Target status of a workflow transition. */
     public record ChangeStatusRequest(@NotNull TaskStatus status) {
     }
 
-    /** The project a task belongs to (id + name for links and labels). */
     public record ProjectRef(UUID id, String name) {
     }
 

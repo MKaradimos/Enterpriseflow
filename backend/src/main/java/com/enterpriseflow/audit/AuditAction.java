@@ -1,6 +1,6 @@
 package com.enterpriseflow.audit;
 
-/** Business actions recorded in the audit trail. Stored as text, so new values need no migration. */
+/** What gets written to the audit trail. */
 public enum AuditAction {
     USER_REGISTERED,
     USER_CREATED,

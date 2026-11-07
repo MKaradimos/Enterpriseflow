@@ -22,10 +22,7 @@ public class AppUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    /**
-     * Loads the account for a login attempt. Deactivated users are returned as disabled, so Spring Security rejects
-     * them with the same generic 401 as a wrong password.
-     */
+    // Inactive users come back as disabled, so login fails with the usual generic 401.
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) {

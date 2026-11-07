@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Dashboard payload. All numbers and lists are already limited to the projects the caller can see.
- */
+/** Everything the dashboard shows, already limited to the caller's projects. */
 public record DashboardResponse(Kpis kpis,
                                 Map<TaskStatus, Long> tasksByStatus,
                                 Map<TaskPriority, Long> tasksByPriority,
@@ -21,12 +19,10 @@ public record DashboardResponse(Kpis kpis,
                                 List<ApprovalResponse> approvalsToReview,
                                 List<AuditLogResponse> recentActivity) {
 
-    /** Headline numbers shown as cards at the top of the dashboard. */
     public record Kpis(long totalProjects, long activeProjects, long totalTasks, long completedTasks,
                        long overdueTasks, long pendingApprovals) {
     }
 
-    /** Completion of one project, derived from its tasks (done / total). */
     public record ProjectProgress(UUID id, String name, ProjectStatus status, long totalTasks, long doneTasks,
                                   int progressPercent) {
     }

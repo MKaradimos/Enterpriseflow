@@ -13,13 +13,12 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 
-/** Translates the task list filters into a JPA Specification (dynamic WHERE clause). */
+/** Builds the task list WHERE clause from the optional filters. */
 final class TaskSpecifications {
 
     private TaskSpecifications() {
     }
 
-    /** Every filter is optional; the membership restriction for non-admins is always applied. */
     static Specification<Task> matching(TaskFilter filter, CurrentUser user, LocalDate today) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

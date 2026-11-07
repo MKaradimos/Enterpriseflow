@@ -1,5 +1,3 @@
-// Horizontal bar chart for counts per category (tasks by status / priority), built with Recharts.
-
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface Datum {

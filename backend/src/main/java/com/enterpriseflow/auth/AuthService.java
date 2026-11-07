@@ -15,11 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Orchestrates the authentication use cases: registration, login, token refresh and logout.
- * Password checks are delegated to Spring Security, access tokens to {@link JwtTokenService} and refresh
- * tokens (storage, rotation, reuse detection) to {@link RefreshTokenService}.
- */
+/** Login / refresh / logout flow on top of Spring Security, JwtTokenService and RefreshTokenService. */
 @Service
 public class AuthService {
 
@@ -39,7 +35,6 @@ public class AuthService {
         this.properties = properties;
     }
 
-    /** Self-registration; new accounts always get the EMPLOYEE role. */
     public UserResponse register(RegisterRequest request) {
         if (!properties.registrationEnabled()) {
             // 404 rather than 403: when disabled, the endpoint should look like it doesn't exist.
@@ -74,14 +69,12 @@ public class AuthService {
         return startSession(user, rotation.rawToken());
     }
 
-    /** Revokes the presented refresh token. Idempotent: logging out without a cookie is not an error. */
     public void logout(String rawRefreshToken) {
         if (rawRefreshToken != null && !rawRefreshToken.isBlank()) {
             refreshTokenService.revoke(rawRefreshToken);
         }
     }
 
-    /** Issues a fresh access token and pairs it with the given refresh token. */
     private Session startSession(User user, String rawRefreshToken) {
         JwtTokenService.AccessToken accessToken = jwtTokenService.issue(user);
         return new Session(new AuthResponse(accessToken.value(), accessToken.expiresAt(), UserResponse.from(user)),

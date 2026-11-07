@@ -1,9 +1,6 @@
 package com.enterpriseflow.user;
 
-/**
- * Organization-wide roles. ADMIN manages users and everything else; MANAGER creates and runs projects;
- * EMPLOYEE works on tasks in the projects they belong to.
- */
+/** ADMIN runs everything, MANAGER runs projects, EMPLOYEE works on tasks. */
 public enum RoleName {
     ADMIN,
     MANAGER,

@@ -15,5 +15,5 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 8080
-# 127.0.0.1 rather than localhost: in Alpine, localhost resolves to ::1 first, but nginx listens on IPv4 only.
+# 127.0.0.1, not localhost: on Alpine localhost resolves to ::1 and nginx only listens on IPv4.
 HEALTHCHECK --interval=10s --timeout=3s --retries=5 CMD wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1

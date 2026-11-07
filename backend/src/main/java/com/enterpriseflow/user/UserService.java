@@ -31,11 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * User management: creation, roles, activation, profile and password. Protects against locking the
- * organization out (an admin cannot demote or deactivate themselves, and one active admin must remain) and
- * publishes {@code UserCredentialsInvalidatedEvent} whenever existing sessions must end.
- */
+/** Accounts, roles and passwords. Any change that should end existing sessions publishes an event. */
 @Service
 public class UserService {
 
@@ -56,7 +52,6 @@ public class UserService {
 
     // ---- Creation ---------------------------------------------------------------------------------------
 
-    /** Self-registration path: always the EMPLOYEE role. */
     @Transactional
     public UserResponse registerEmployee(String email, String fullName, String rawPassword) {
         User user = createUser(email, fullName, null, rawPassword, Set.of(RoleName.EMPLOYEE));
@@ -64,7 +59,6 @@ public class UserService {
         return UserResponse.from(user);
     }
 
-    /** Admin creates a user with chosen roles and an initial password. */
     @Transactional
     public UserResponse createByAdmin(CurrentUser actor, CreateUserRequest request) {
         User user = createUser(request.email(), request.fullName(), request.jobTitle(), request.password(),
@@ -89,7 +83,6 @@ public class UserService {
 
     // ---- Administration ---------------------------------------------------------------------------------
 
-    /** Admin user list with optional text, role and status filters. */
     @Transactional(readOnly = true)
     public PageResponse<UserResponse> search(String query, RoleName role, Boolean active, Pageable pageable) {
         return PageResponse.from(userRepository.findAll(searchSpec(query, role, active), pageable), UserResponse::from);
@@ -100,7 +93,6 @@ public class UserService {
         return UserResponse.from(findWithRoles(id));
     }
 
-    /** Replaces a user's roles and ends their sessions so the new roles apply immediately on next refresh. */
     @Transactional
     public UserResponse updateRoles(CurrentUser actor, UUID id, Set<RoleName> roleNames) {
         User user = findWithRoles(id);
@@ -123,7 +115,6 @@ public class UserService {
         return UserResponse.from(user);
     }
 
-    /** Activates or deactivates an account; deactivation also revokes all of its sessions. */
     @Transactional
     public UserResponse setActive(CurrentUser actor, UUID id, boolean active) {
         User user = findWithRoles(id);
@@ -157,7 +148,6 @@ public class UserService {
 
     // ---- Own profile ------------------------------------------------------------------------------------
 
-    /** The caller edits their own name and job title. */
     @Transactional
     public UserResponse updateProfile(CurrentUser actor, UpdateProfileRequest request) {
         User user = findWithRoles(actor.id());
@@ -165,7 +155,7 @@ public class UserService {
         return UserResponse.from(user);
     }
 
-    /** Requires the current password, rejects reusing it, and signs the user out everywhere. */
+    // Needs the current password and signs the user out everywhere.
     @Transactional
     public void changePassword(CurrentUser actor, ChangePasswordRequest request) {
         User user = findWithRoles(actor.id());
@@ -181,13 +171,11 @@ public class UserService {
 
     // ---- Helpers ----------------------------------------------------------------------------------------
 
-    /** Loads a user with roles or fails with 404. */
     @Transactional(readOnly = true)
     public User findWithRoles(UUID id) {
         return userRepository.findWithRolesById(id).orElseThrow(() -> new ResourceNotFoundException("User", id));
     }
 
-    /** Maps role names to Role entities, rejecting unknown names. */
     private Set<Role> resolveRoles(Collection<RoleName> names) {
         List<Role> roles = roleRepository.findByNameIn(names);
         if (roles.size() != Set.copyOf(names).size()) {

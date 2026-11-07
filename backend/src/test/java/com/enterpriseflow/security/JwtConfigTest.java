@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.util.Base64;
 import org.junit.jupiter.api.Test;
 
-/** The application must refuse to start with a weak or malformed JWT signing key. */
 class JwtConfigTest {
 
     private final JwtConfig config = new JwtConfig();

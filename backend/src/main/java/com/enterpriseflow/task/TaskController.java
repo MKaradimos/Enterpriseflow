@@ -34,10 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Task endpoints. Tasks are listed across all visible projects ({@code /tasks}) or within one project
- * ({@code /projects/{id}/tasks}); creation always happens inside a project.
- */
+/** Tasks across all visible projects (/tasks) or inside one project. */
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Tasks")
@@ -54,7 +51,6 @@ public class TaskController {
         this.auditQueryService = auditQueryService;
     }
 
-    // Cross-project task list with filters (status, priority, assignee, overdue, search).
     @GetMapping("/tasks")
     @Operation(summary = "Search tasks across all projects visible to the caller")
     public PageResponse<TaskResponse> search(
@@ -74,7 +70,6 @@ public class TaskController {
         return taskService.search(user, filter, Pageables.restrictSort(pageable, SORTABLE));
     }
 
-    // Tasks of one project; 404 if the caller cannot see the project.
     @GetMapping("/projects/{projectId}/tasks")
     @Operation(summary = "List the tasks of one project")
     public PageResponse<TaskResponse> projectTasks(
@@ -89,7 +84,6 @@ public class TaskController {
         return taskService.search(user, filter, Pageables.restrictSort(pageable, SORTABLE));
     }
 
-    // Creates a task in a project (project manager or ADMIN).
     @PostMapping("/projects/{projectId}/tasks")
     @Operation(summary = "Create a task in a project (project manager or ADMIN)")
     public ResponseEntity<TaskResponse> create(CurrentUser user, @PathVariable UUID projectId,
@@ -111,7 +105,6 @@ public class TaskController {
         return taskService.update(taskId, user, request);
     }
 
-    // Moves the task through its workflow; invalid transitions return 409.
     @PatchMapping("/tasks/{taskId}/status")
     @Operation(summary = "Move a task through its workflow (assignee, project manager or ADMIN)")
     public TaskResponse changeStatus(CurrentUser user, @PathVariable UUID taskId,
@@ -127,7 +120,6 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    // Audit history of the task, shown on the task detail page.
     @GetMapping("/tasks/{taskId}/activity")
     @Operation(summary = "Activity history of a task")
     public List<AuditLogResponse> activity(CurrentUser user, @PathVariable UUID taskId) {

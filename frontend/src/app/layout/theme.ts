@@ -1,5 +1,3 @@
-// Light / dark theme handling: reads the saved choice and toggles the `dark` class on <html>.
-
 import { useCallback, useState } from 'react'
 
 type Theme = 'light' | 'dark'

@@ -1,5 +1,4 @@
-// HTTP client for the backend API: attaches the access token, refreshes it transparently on 401, and turns
-// error responses into ApiError objects.
+// Axios client: adds the access token, refreshes it on 401 and retries once.
 
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import type { AuthResponse } from '@/types/api'
@@ -14,7 +13,6 @@ export interface ProblemDetail {
   errors?: { field: string; message: string }[]
 }
 
-/** Error thrown for every failed API call; carries the HTTP status and the Problem Details body. */
 export class ApiError extends Error {
   readonly status: number
   readonly problem: ProblemDetail | undefined
@@ -49,12 +47,10 @@ let csrfToken: string | null = null
 let refreshInFlight: Promise<AuthResponse> | null = null
 let onSessionExpired: (() => void) | null = null
 
-/** Stores (or clears) the in-memory access token. */
 export function setAccessToken(token: string | null) {
   accessToken = token
 }
 
-/** Lets the auth context react when a refresh fails and the user must sign in again. */
 export function setSessionExpiredHandler(handler: (() => void) | null) {
   onSessionExpired = handler
 }

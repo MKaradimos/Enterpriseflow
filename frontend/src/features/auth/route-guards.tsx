@@ -1,5 +1,3 @@
-// Route guards: RequireAuth for any signed-in user and RequireRole for role-restricted pages.
-
 import { Loader2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router'

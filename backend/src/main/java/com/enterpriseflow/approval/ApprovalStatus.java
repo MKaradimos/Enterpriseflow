@@ -1,6 +1,6 @@
 package com.enterpriseflow.approval;
 
-/** Lifecycle of an approval request: PENDING → APPROVED | REJECTED | CANCELLED. */
+/** PENDING until someone approves, rejects or cancels it. */
 public enum ApprovalStatus {
     PENDING,
     APPROVED,

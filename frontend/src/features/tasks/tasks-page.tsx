@@ -1,5 +1,3 @@
-// Tasks page: all tasks the user can see, with filters kept in the URL, sorting and pagination.
-
 import { ListChecks, Search } from 'lucide-react'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router'
@@ -19,13 +17,12 @@ const sortOptions = [
   { value: 'title,asc', label: 'Title' },
 ]
 
-/** Task list page; filter values are read from and written to the URL query string. */
 export function TasksPage() {
   const [params, setParams] = useSearchParams()
   const [search, setSearch] = useState(params.get('q') ?? '')
   const q = useDebouncedValue(search, 300)
 
-  // Every filter is read from the URL, so the current view can be bookmarked or shared.
+  // Filters come from the URL, so a view can be bookmarked or shared.
   const filters = {
     q,
     status: (params.get('status') ?? '') as TaskStatus | '',
@@ -37,8 +34,6 @@ export function TasksPage() {
   }
   const { data, isPending, isError, error, refetch, isPlaceholderData } = useTasks(filters)
 
-  // Updates one filter in the URL. Changing any filter except the page itself goes back to the first page,
-  // because the old page number may not exist in the new result set.
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)

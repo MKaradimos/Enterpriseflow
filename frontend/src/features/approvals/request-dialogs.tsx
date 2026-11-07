@@ -1,5 +1,3 @@
-// Dialogs for submitting approval requests: a project budget change and a task completion.
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -21,7 +19,6 @@ import { formatCurrency } from '@/lib/format'
 import type { Project, Task } from '@/types/api'
 import { useSubmitApproval } from './api'
 
-// Every request needs a reason, so the reviewer knows why it was asked.
 const reasonField = z.string().trim().min(1, 'Explain the reason for the request').max(1000)
 
 const budgetSchema = z.object({
@@ -29,7 +26,6 @@ const budgetSchema = z.object({
   reason: reasonField,
 })
 
-/** Requests a new budget for a project; an admin must approve it. */
 export function BudgetRequestDialog({
   project,
   open,
@@ -48,7 +44,6 @@ export function BudgetRequestDialog({
   } = useForm<z.infer<typeof budgetSchema>>({ resolver: zodResolver(budgetSchema) })
 
   useEffect(() => {
-    // Start from the current budget each time the dialog opens.
     if (open) reset({ budget: project.budget?.toString() ?? '', reason: '' })
   }, [open, project.budget, reset])
 
@@ -99,7 +94,6 @@ export function BudgetRequestDialog({
 
 const completionSchema = z.object({ reason: reasonField })
 
-/** Asks the project manager to approve completing a task that requires approval. */
 export function CompletionRequestDialog({
   task,
   open,

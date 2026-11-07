@@ -1,8 +1,7 @@
 # Local development defaults. Values still come from .env / the environment when set.
 spring:
   datasource:
-    # Points at the Docker Compose database through its published host port (POSTGRES_HOST_PORT, default 5433),
-    # so a PostgreSQL installed directly on the machine (usually on 5432) is never used by accident.
+    # Compose database on 5433, so a locally installed PostgreSQL on 5432 is never picked up by mistake.
     url: ${DB_URL:jdbc:postgresql://localhost:${POSTGRES_HOST_PORT:5433}/${POSTGRES_DB:enterpriseflow}}
     username: ${DB_USERNAME:${POSTGRES_USER:enterpriseflow}}
     password: ${DB_PASSWORD:${POSTGRES_PASSWORD:enterpriseflow}}

@@ -17,11 +17,7 @@ import jakarta.persistence.Version;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-/**
- * A request that needs a second person's decision: completing a task or changing a project budget.
- * Starts as PENDING and ends in exactly one final state (APPROVED, REJECTED or CANCELLED).
- * State changes go through the methods below, which enforce that a request is decided only once.
- */
+/** A change that needs someone else's sign-off: completing a task or changing a project budget. */
 @Entity
 @Table(name = "approval_requests")
 public class ApprovalRequest extends BaseEntity {
@@ -83,12 +79,10 @@ public class ApprovalRequest extends BaseEntity {
         this.requestedBudget = requestedBudget;
     }
 
-    /** Factory for a TASK_COMPLETION request; the project is taken from the task. */
     public static ApprovalRequest taskCompletion(Task task, User requester, String reason) {
         return new ApprovalRequest(ApprovalType.TASK_COMPLETION, task.getProject(), task, requester, reason, null);
     }
 
-    /** Factory for a PROJECT_BUDGET_CHANGE request carrying the proposed new budget. */
     public static ApprovalRequest budgetChange(Project project, BigDecimal budget, User requester, String reason) {
         return new ApprovalRequest(ApprovalType.PROJECT_BUDGET_CHANGE, project, null, requester, reason, budget);
     }
@@ -101,7 +95,6 @@ public class ApprovalRequest extends BaseEntity {
         decide(ApprovalStatus.REJECTED, reviewer, comment, now);
     }
 
-    /** Withdrawn by the requester before anyone decided it. */
     void cancel() {
         ensurePending();
         this.status = ApprovalStatus.CANCELLED;

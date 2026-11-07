@@ -1,5 +1,3 @@
-// Table primitives with consistent styling and horizontal scrolling on small screens.
-
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 

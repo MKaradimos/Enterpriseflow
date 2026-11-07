@@ -1,5 +1,3 @@
-// Notifications page: list with unread filter; opening a notification marks it read and links to its item.
-
 import { Bell, CheckCheck } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -13,14 +11,12 @@ import { cn } from '@/lib/utils'
 import type { Notification } from '@/types/api'
 import { useMarkRead, useNotifications } from './api'
 
-// Where a notification links to, depending on the type of item it refers to.
 const referenceRoutes: Record<NonNullable<Notification['referenceType']>, (id: string) => string> = {
   TASK: (id) => `/tasks/${id}`,
   PROJECT: (id) => `/projects/${id}`,
   APPROVAL: () => '/approvals?scope=ALL',
 }
 
-/** Notification list with "unread only" filter and "mark all as read". */
 export function NotificationsPage() {
   const [page, setPage] = useState(0)
   const [unreadOnly, setUnreadOnly] = useState(false)
@@ -28,7 +24,7 @@ export function NotificationsPage() {
   const markRead = useMarkRead()
   const navigate = useNavigate()
 
-  // Opening a notification marks it read and navigates to the item it is about.
+  // Mark as read and jump to whatever it's about.
   const open = (n: Notification) => {
     if (!n.read) markRead.mutate(n.id)
     if (n.referenceType && n.referenceId) navigate(referenceRoutes[n.referenceType](n.referenceId))

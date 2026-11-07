@@ -29,10 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * User administration. Every endpoint is ADMIN-only except {@code /lookup}, which managers also need to pick
- * project members and task assignees.
- */
+/** User admin. /lookup is also open to managers for the member and assignee pickers. */
 @RestController
 @RequestMapping("/api/v1/users")
 @Tag(name = "Users")

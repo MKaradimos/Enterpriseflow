@@ -1,5 +1,3 @@
-// React Query hooks for approval requests: list, submit, and decide (approve / reject / cancel).
-
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api-client'
 import { cleanParams, queryKeys } from '@/lib/query'
@@ -19,7 +17,6 @@ export interface SubmitApprovalInput {
   reason: string
 }
 
-/** Paged approval requests for the selected scope and status. */
 export function useApprovals(filters: ApprovalFilters) {
   return useQuery({
     queryKey: [...queryKeys.approvals, 'list', filters],
@@ -39,7 +36,6 @@ function useInvalidateApprovals() {
   }
 }
 
-/** Submits a new approval request. */
 export function useSubmitApproval() {
   const invalidate = useInvalidateApprovals()
   return useMutation({
@@ -48,7 +44,6 @@ export function useSubmitApproval() {
   })
 }
 
-/** Approves, rejects or cancels a request. */
 export function useApprovalDecision() {
   const invalidate = useInvalidateApprovals()
   return useMutation({

@@ -37,10 +37,7 @@ public class DashboardService {
         this.clock = clock;
     }
 
-    /**
-     * Builds every dashboard section for the caller. Each part reuses the scoped queries of its own module, so the
-     * dashboard can never show data that the corresponding page would hide.
-     */
+    // Reuses each module's own scoped queries, so the dashboard never shows more than the pages do.
     @Transactional(readOnly = true)
     public DashboardResponse build(CurrentUser user) {
         LocalDate today = LocalDate.now(clock);

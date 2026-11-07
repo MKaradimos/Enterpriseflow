@@ -5,7 +5,6 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import java.util.Locale;
 
-/** Reusable building blocks for JPA Criteria / Spring Data Specifications. */
 public final class SpecificationUtils {
 
     private static final char ESCAPE = '\\';

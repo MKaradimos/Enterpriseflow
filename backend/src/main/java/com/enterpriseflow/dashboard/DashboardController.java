@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Single endpoint that returns everything the dashboard page needs in one round trip. */
 @RestController
 @RequestMapping("/api/v1/dashboard")
 @Tag(name = "Dashboard")

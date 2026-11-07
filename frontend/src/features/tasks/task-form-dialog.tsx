@@ -1,5 +1,3 @@
-// Create / edit task dialog. Assignees are limited to members of the task's project.
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -22,7 +20,7 @@ import { humanize, taskPriorities } from '@/lib/format'
 import type { Task } from '@/types/api'
 import { useCreateTask, useUpdateTask } from './api'
 
-// Same limits as the backend's task DTOs; the server validates again.
+// Same limits as the backend, which checks again anyway.
 const taskSchema = z.object({
   title: z.string().trim().min(1, 'Title is required').max(200),
   description: z.string().max(10000).optional(),
@@ -34,7 +32,6 @@ const taskSchema = z.object({
 
 type Values = z.infer<typeof taskSchema>
 
-/** Used for both creating and editing a task. */
 export function TaskFormDialog({
   open,
   onOpenChange,
@@ -60,7 +57,6 @@ export function TaskFormDialog({
   } = useForm<Values>({ resolver: zodResolver(taskSchema) })
 
   useEffect(() => {
-    // Fill the form from the task when editing, or with defaults when creating, every time it opens.
     if (open) {
       reset({
         title: task?.title ?? '',

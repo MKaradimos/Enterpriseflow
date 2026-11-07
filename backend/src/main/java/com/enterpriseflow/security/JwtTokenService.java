@@ -11,10 +11,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-/**
- * Issues signed (HS256) access tokens. The subject is the user id; email and roles are added as claims so
- * that requests can be authorized without a database lookup.
- */
+/** Issues HS256 access tokens: user id as subject, email and roles as claims. */
 @Service
 public class JwtTokenService {
 
@@ -30,7 +27,6 @@ public class JwtTokenService {
         this.clock = clock;
     }
 
-    /** Creates a short-lived access token for the user with their current roles. */
     public AccessToken issue(User user) {
         Instant now = clock.instant();
         Instant expiresAt = now.plus(properties.accessTokenTtl());
@@ -50,7 +46,6 @@ public class JwtTokenService {
         return new AccessToken(token, expiresAt);
     }
 
-    /** The encoded token and its expiry, which the SPA uses to know when to refresh. */
     public record AccessToken(String value, Instant expiresAt) {
     }
 
@@ -60,7 +55,6 @@ public class JwtTokenService {
                 .getTokenValue();
     }
 
-    /** The configured issuer; tokens with any other issuer are rejected on validation. */
     public String issuer() {
         return properties.issuer();
     }

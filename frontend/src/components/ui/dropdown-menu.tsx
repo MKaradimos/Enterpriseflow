@@ -1,5 +1,3 @@
-// Dropdown menu primitives built on Radix, used for the user menu and row actions.
-
 import * as Menu from '@radix-ui/react-dropdown-menu'
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'

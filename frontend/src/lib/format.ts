@@ -1,5 +1,3 @@
-// Formatting helpers (dates, currency, relative time, labels) and the lists of enum values used in filters.
-
 import type { ApprovalStatus, ProjectStatus, TaskPriority, TaskStatus } from '@/types/api'
 
 const dateFormat = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -18,17 +16,14 @@ export function formatDate(value: string | null | undefined): string {
   return dateFormat.format(new Date(year!, month! - 1, day!))
 }
 
-/** Formats an ISO timestamp in the user's local time. */
 export function formatDateTime(value: string | null | undefined): string {
   return value ? dateTimeFormat.format(new Date(value)) : '—'
 }
 
-/** Formats an amount in euros. */
 export function formatCurrency(value: number | null | undefined): string {
   return value == null ? '—' : currencyFormat.format(value)
 }
 
-/** "5 minutes ago"-style text for recent timestamps. */
 export function relativeTime(value: string, now = Date.now()): string {
   const seconds = Math.round((new Date(value).getTime() - now) / 1000)
   const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
@@ -49,7 +44,6 @@ export function humanize(value: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
-// Enum values in display order, used to build filter and form options.
 export const taskStatuses: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'BLOCKED', 'DONE']
 export const taskPriorities: TaskPriority[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']
 export const projectStatuses: ProjectStatus[] = ['PLANNED', 'ACTIVE', 'ON_HOLD', 'COMPLETED', 'ARCHIVED']

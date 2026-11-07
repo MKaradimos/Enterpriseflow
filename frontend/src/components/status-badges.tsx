@@ -1,11 +1,7 @@
-// Colored badges for statuses and priorities, plus a progress bar. Each badge also shows text, so meaning
-// never depends on color alone.
-
 import { Badge, type BadgeVariant } from '@/components/ui/badge'
 import { humanize } from '@/lib/format'
 import type { ApprovalStatus, ProjectStatus, TaskPriority, TaskStatus } from '@/types/api'
 
-// Color of each value. Records force every enum value to have a color at compile time.
 const taskStatusVariant: Record<TaskStatus, BadgeVariant> = {
   TODO: 'secondary',
   IN_PROGRESS: 'accent',
@@ -52,7 +48,6 @@ export function ApprovalStatusBadge({ status }: { status: ApprovalStatus }) {
   return <Badge variant={approvalStatusVariant[status]}>{humanize(status)}</Badge>
 }
 
-/** Accessible progress bar (role=progressbar with aria values). */
 export function ProgressBar({ value, label }: { value: number; label?: string }) {
   return (
     <div className="flex items-center gap-2">

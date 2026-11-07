@@ -9,10 +9,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-/** Read and insert access to the audit trail. Updates and deletes are blocked by a database trigger. */
+// Insert and read only; a DB trigger blocks updates and deletes.
 public interface AuditLogRepository extends JpaRepository<AuditLog, UUID>, JpaSpecificationExecutor<AuditLog> {
 
-    /** History of one entity, newest first (task and project activity tabs). */
     List<AuditLog> findByEntityTypeAndEntityIdOrderByOccurredAtDesc(AuditEntityType entityType, UUID entityId);
 
     /** Recent activity limited to the projects the caller can see. */
@@ -23,7 +22,6 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID>, JpaSp
             """)
     Page<AuditLog> findRecentForMember(@Param("userId") UUID userId, Pageable pageable);
 
-    /** Recent activity across all projects, for administrators. */
     @Query("select a from AuditLog a where a.projectId is not null order by a.occurredAt desc")
     Page<AuditLog> findRecentProjectActivity(Pageable pageable);
 }

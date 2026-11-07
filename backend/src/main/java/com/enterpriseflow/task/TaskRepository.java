@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-/** Task queries. List queries go through Specifications built by {@code TaskSpecifications}. */
 public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificationExecutor<Task> {
 
     /** Everything a task row displays, loaded in the same query (all to-one, so pagination stays in SQL). */
@@ -24,7 +23,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificat
     Optional<Task> findDetailedById(UUID id);
 
     /** A removed member keeps no open assignments in that project; completed work keeps its history. */
-    // Flush before the bulk update so pending changes in the same transaction are not lost by the clear.
+    // Flush first, otherwise the clear would drop pending changes.
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("""
             update Task t set t.assignee = null

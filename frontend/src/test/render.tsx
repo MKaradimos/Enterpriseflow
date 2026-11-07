@@ -1,5 +1,3 @@
-// Test helpers: render with the real providers or route tree, and build fake users, sessions and pages.
-
 import { render, type RenderOptions } from '@testing-library/react'
 import type { ReactElement } from 'react'
 import { createMemoryRouter, RouterProvider } from 'react-router'

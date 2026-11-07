@@ -1,5 +1,3 @@
-// Create / edit project dialog with the same validation rules as the backend.
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -43,7 +41,6 @@ type Values = z.infer<typeof schema>
 
 const editableStatuses = projectStatuses.filter((s) => s !== 'ARCHIVED') as Exclude<ProjectStatus, 'ARCHIVED'>[]
 
-/** Used for both creating and editing a project. */
 export function ProjectFormDialog({
   open,
   onOpenChange,

@@ -1,5 +1,3 @@
-// React Query hooks for tasks: list with filters, details, activity and task mutations.
-
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api-client'
 import { cleanParams, queryKeys } from '@/lib/query'
@@ -26,7 +24,6 @@ export interface TaskInput {
   requiresApproval: boolean
 }
 
-/** Paged task list; all filters (including projectId) are sent as query parameters to /tasks. */
 export function useTasks(filters: TaskFilters) {
   return useQuery({
     queryKey: [...queryKeys.tasks, 'list', filters],
@@ -69,7 +66,6 @@ function useInvalidateTasks() {
   }
 }
 
-/** Creates a task in a project. */
 export function useCreateTask(projectId: string) {
   const invalidate = useInvalidateTasks()
   return useMutation({
@@ -86,7 +82,6 @@ export function useUpdateTask(id: string) {
   })
 }
 
-/** Moves a task to another workflow status. */
 export function useChangeTaskStatus() {
   const invalidate = useInvalidateTasks()
   return useMutation({
@@ -96,7 +91,6 @@ export function useChangeTaskStatus() {
   })
 }
 
-/** Archives (soft-deletes) a task. */
 export function useArchiveTask() {
   const invalidate = useInvalidateTasks()
   return useMutation({

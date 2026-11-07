@@ -23,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Authentication endpoints. Login and refresh return the access token in the JSON body and set the refresh
- * token as an HttpOnly cookie, so JavaScript can never read the long-lived credential.
- */
+/** Login, refresh, logout. The refresh token only ever travels as an HttpOnly cookie. */
 @RestController
 @RequestMapping("/api/v1/auth")
 @Tag(name = "Authentication")
@@ -88,7 +85,6 @@ public class AuthController {
         return userService.get(user.id());
     }
 
-    /** 200 response with the access token in the body and the new refresh token in a cookie. */
     private ResponseEntity<AuthResponse> withRefreshCookie(AuthService.Session session) {
         ResponseCookie cookie = refreshCookie(session.refreshToken(), properties.refreshTokenTtl());
         return ResponseEntity.ok()
@@ -98,7 +94,6 @@ public class AuthController {
                 .body(session.response());
     }
 
-    /** Builds the refresh cookie; an empty value with max-age 0 deletes it on logout. */
     private ResponseCookie refreshCookie(String value, Duration maxAge) {
         return ResponseCookie.from(properties.refreshCookie().name(), value)
                 .httpOnly(true)

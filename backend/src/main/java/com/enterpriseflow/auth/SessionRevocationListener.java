@@ -4,10 +4,7 @@ import com.enterpriseflow.user.UserCredentialsInvalidatedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-/**
- * Bridges the user module and the auth module: when a user's credentials become invalid, all of their
- * refresh tokens are revoked. The user module publishes an event and does not depend on auth classes.
- */
+/** Revokes a user's refresh tokens when the user module says their credentials changed. */
 @Component
 class SessionRevocationListener {
 

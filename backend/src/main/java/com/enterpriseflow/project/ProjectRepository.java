@@ -13,10 +13,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-/**
- * Project queries. Besides plain lookups it provides aggregated counts (tasks, members) per project, so a
- * list page needs a fixed number of queries regardless of how many projects it shows.
- */
+// Grouped count queries keep list pages at a fixed number of queries.
 public interface ProjectRepository extends JpaRepository<Project, UUID>, JpaSpecificationExecutor<Project> {
 
     // Fetching the manager (a to-one association) together with the page is safe with pagination.
@@ -44,7 +41,6 @@ public interface ProjectRepository extends JpaRepository<Project, UUID>, JpaSpec
             where m.project.id in :projectIds
             group by m.project.id
             """)
-    /** Member count per project for a whole page in one grouped query. */
     List<MemberCount> countMembersByProject(@Param("projectIds") Collection<UUID> projectIds);
 
     /** Interface projections: Spring Data maps the query aliases onto these getters. */

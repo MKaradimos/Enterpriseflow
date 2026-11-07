@@ -1,5 +1,3 @@
-// React Query hooks for projects: list, details, members, activity and all project mutations.
-
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api-client'
 import { cleanParams, queryKeys } from '@/lib/query'
@@ -23,7 +21,6 @@ export interface ProjectInput {
   dueDate?: string | null
 }
 
-/** Paged project list for the given filters. */
 export function useProjects(filters: ProjectFilters) {
   return useQuery({
     queryKey: [...queryKeys.projects, 'list', filters],
@@ -64,7 +61,6 @@ function useInvalidateProjects() {
   }
 }
 
-/** Creates a project. */
 export function useCreateProject() {
   const invalidate = useInvalidateProjects()
   return useMutation({
@@ -81,7 +77,6 @@ export function useUpdateProject(id: string) {
   })
 }
 
-/** Archives or restores a project. */
 export function useProjectAction(id: string, action: 'archive' | 'restore') {
   const invalidate = useInvalidateProjects()
   const queryClient = useQueryClient()
@@ -94,7 +89,6 @@ export function useProjectAction(id: string, action: 'archive' | 'restore') {
   })
 }
 
-/** Adds a user to the project team. */
 export function useAddMember(projectId: string) {
   const invalidate = useInvalidateProjects()
   return useMutation({

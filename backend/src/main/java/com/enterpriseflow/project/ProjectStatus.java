@@ -1,6 +1,5 @@
 package com.enterpriseflow.project;
 
-/** Lifecycle status of a project. */
 public enum ProjectStatus {
     PLANNED,
     ACTIVE,

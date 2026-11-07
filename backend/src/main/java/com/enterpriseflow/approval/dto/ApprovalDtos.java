@@ -12,10 +12,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-/**
- * Request and response bodies of the approvals API. Records keep DTOs immutable and separate from the JPA
- * entities, so internal fields never leak into JSON.
- */
+/** Request / response bodies for the approvals API. */
 public final class ApprovalDtos {
 
     private ApprovalDtos() {
@@ -33,18 +30,12 @@ public final class ApprovalDtos {
             @NotBlank @Size(max = 1000) String reason) {
     }
 
-    /** Body of approve / reject. The service requires a comment when rejecting. */
     public record DecisionRequest(@Size(max = 1000) String comment) {
     }
 
-    /** Minimal reference to a related project or task (id + display name). */
     public record Ref(UUID id, String name) {
     }
 
-    /**
-     * One approval request as shown in the UI. {@code currentBudget} lets reviewers compare old and new budget;
-     * {@code canDecide} / {@code canCancel} are computed per caller so the UI shows only allowed actions.
-     */
     public record ApprovalResponse(UUID id, ApprovalType type, ApprovalStatus status, Ref project, Ref task,
                                    UserSummary requester, UserSummary reviewer, String reason,
                                    BigDecimal requestedBudget, BigDecimal currentBudget, String reviewComment,

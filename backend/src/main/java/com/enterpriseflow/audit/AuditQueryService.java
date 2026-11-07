@@ -20,10 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Read side of the audit trail: admin search, per-entity history and the dashboard's recent activity.
- * Kept separate from {@link AuditService} so writing stays a small, mandatory-transaction operation.
- */
+/** Read side of the audit trail: admin search, item history, dashboard activity. */
 @Service
 @Transactional(readOnly = true)
 public class AuditQueryService {
@@ -36,7 +33,6 @@ public class AuditQueryService {
         this.userRepository = userRepository;
     }
 
-    /** Filtered, paged search; every filter is optional. */
     public PageResponse<AuditLogResponse> search(AuditFilter filter, Pageable pageable) {
         Page<AuditLog> page = auditRepository.findAll(toSpecification(filter), pageable);
         Map<UUID, String> names = actorNames(page.getContent());
@@ -48,7 +44,6 @@ public class AuditQueryService {
         return toResponses(auditRepository.findByEntityTypeAndEntityIdOrderByOccurredAtDesc(type, entityId));
     }
 
-    /** Latest entries the caller may see: everything for ADMIN, otherwise only their projects. */
     public List<AuditLogResponse> recentActivity(CurrentUser user, int limit) {
         Pageable top = PageRequest.of(0, limit);
         Page<AuditLog> page = user.isAdmin()
@@ -72,7 +67,6 @@ public class AuditQueryService {
                 .collect(Collectors.toMap(User::getId, User::getFullName, (a, b) -> a));
     }
 
-    /** Builds a WHERE clause from the filters that are present. */
     private static Specification<AuditLog> toSpecification(AuditFilter filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -91,7 +85,6 @@ public class AuditQueryService {
         }
     }
 
-    /** Optional search criteria; null means "no filter". */
     public record AuditFilter(AuditEntityType entityType, UUID entityId, AuditAction action, UUID actorId,
                               UUID projectId) {
     }

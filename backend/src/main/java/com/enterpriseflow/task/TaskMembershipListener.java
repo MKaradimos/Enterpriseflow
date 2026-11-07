@@ -4,7 +4,7 @@ import com.enterpriseflow.project.ProjectMemberRemovedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-/** Keeps tasks consistent with project membership: a removed member keeps no open assignments. */
+/** Unassigns open tasks when someone leaves a project. */
 @Component
 class TaskMembershipListener {
 

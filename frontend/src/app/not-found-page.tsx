@@ -1,8 +1,5 @@
-// Fallback page for unknown URLs.
-
 import { Link } from 'react-router'
 
-/** 404 page with a link back to the dashboard. */
 export function NotFoundPage() {
   return (
     <div className="flex flex-col items-start gap-2">

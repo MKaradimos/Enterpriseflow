@@ -1,5 +1,3 @@
-// Tasks page: rendering, overdue marking, filters sent to the API and the error state.
-
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { AxiosResponse } from 'axios'

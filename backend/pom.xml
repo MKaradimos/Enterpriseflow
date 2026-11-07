@@ -21,7 +21,7 @@
         <java.version>21</java.version>
         <!-- springdoc is not managed by the Spring Boot BOM; 2.8.x is the line for Boot 3.5 -->
         <springdoc.version>2.8.9</springdoc.version>
-        <!-- Empty default so @{argLine} in surefire resolves even when no other plugin (e.g. JaCoCo) sets it. -->
+        <!-- Default for @{argLine} below when no other plugin sets it -->
         <argLine></argLine>
     </properties>
 
@@ -121,7 +121,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Exposes the path of every dependency jar as a property, e.g. ${org.mockito:mockito-core:jar} -->
+                <!-- Gives us ${org.mockito:mockito-core:jar} for the agent path below -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -133,8 +133,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Loads Mockito as a Java agent. Recent JDKs warn about (and will block) agents attached at
-                     runtime, which is what Mockito's inline mock maker otherwise does. -->
+                <!-- Mockito as a Java agent; newer JDKs warn about agents attached at runtime -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>

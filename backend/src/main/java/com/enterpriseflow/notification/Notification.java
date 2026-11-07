@@ -11,10 +11,7 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
-/**
- * An in-app notification for one user. {@code readAt} is null while unread. The optional reference points to
- * the task, project or approval the notification is about, so the UI can link to it.
- */
+/** In-app notification. readAt is null while unread; the reference points at the related item. */
 @Entity
 @Table(name = "notifications")
 public class Notification {
@@ -64,7 +61,6 @@ public class Notification {
         this.createdAt = createdAt;
     }
 
-    /** Idempotent: keeps the first read time if called again. */
     void markRead(Instant now) {
         if (readAt == null) {
             readAt = now;

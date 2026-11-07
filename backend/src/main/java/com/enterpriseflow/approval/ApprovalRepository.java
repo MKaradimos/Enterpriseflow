@@ -9,10 +9,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-/**
- * Data access for approval requests. The entity graphs load the project, task and people in the same query,
- * because every response shows them (avoids N+1 selects on list pages).
- */
+// Entity graphs fetch project, task and people up front; every response needs them.
 public interface ApprovalRepository extends JpaRepository<ApprovalRequest, UUID>,
         JpaSpecificationExecutor<ApprovalRequest> {
 
@@ -23,7 +20,7 @@ public interface ApprovalRepository extends JpaRepository<ApprovalRequest, UUID>
     @EntityGraph(attributePaths = {"project", "project.manager", "task", "requester", "reviewer"})
     Optional<ApprovalRequest> findDetailedById(UUID id);
 
-    // Used to allow only one pending request of a given type per project / per task at a time.
+    // Only one pending request of each kind per project / task.
     boolean existsByTypeAndProjectIdAndStatus(ApprovalType type, UUID projectId, ApprovalStatus status);
 
     boolean existsByTypeAndTaskIdAndStatus(ApprovalType type, UUID taskId, ApprovalStatus status);

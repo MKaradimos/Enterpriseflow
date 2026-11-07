@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/** Unit tests for task rules: completion timestamps, approval-only completion, read-only states, overdue logic. */
 class TaskTest {
 
     private static final Instant NOW = Instant.parse("2026-11-07T10:00:00Z");

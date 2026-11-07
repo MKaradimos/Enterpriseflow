@@ -1,5 +1,3 @@
-// Animated placeholder shown while content is loading.
-
 import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** The caller's own notifications. Every operation is scoped to the authenticated user. */
 @RestController
 @RequestMapping("/api/v1/notifications")
 @Tag(name = "Notifications")

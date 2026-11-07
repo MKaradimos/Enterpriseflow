@@ -5,7 +5,6 @@ import java.util.Set;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-/** Helpers for validating paging and sorting parameters coming from clients. */
 public final class Pageables {
 
     private Pageables() {

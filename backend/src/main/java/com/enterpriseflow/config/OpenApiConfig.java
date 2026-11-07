@@ -12,10 +12,7 @@ import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * OpenAPI / Swagger UI metadata. Declares the bearer-token security scheme so the "Authorize" button in
- * Swagger UI can be used to call protected endpoints.
- */
+/** Swagger metadata plus the bearer scheme behind the Authorize button. */
 @Configuration
 public class OpenApiConfig {
 

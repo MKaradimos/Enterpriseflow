@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-/** The task workflow as a table of transitions: each row states whether moving from one status to another is allowed. */
+/** The workflow as a table: from, to, allowed. */
 class TaskStatusTest {
 
     @ParameterizedTest(name = "{0} -> {1} allowed={2}")

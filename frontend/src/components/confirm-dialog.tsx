@@ -1,5 +1,3 @@
-// Reusable confirmation dialog for destructive or important actions, with an optional comment field.
-
 import { useState, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/input'

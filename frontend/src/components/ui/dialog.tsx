@@ -1,5 +1,3 @@
-// Modal dialog primitives built on Radix Dialog, styled for the app.
-
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import type { ComponentProps } from 'react'

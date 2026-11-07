@@ -1,0 +1,25 @@
+# Production-like overrides. Use together with the base file:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Expects TLS to be terminated in front of the frontend (reverse proxy / load balancer), because the refresh
+# cookie is Secure-only in the prod profile.
+services:
+  postgres:
+    # No published port: the database is reachable only from the backend on the internal network.
+    ports: !reset []
+    restart: unless-stopped
+
+  backend:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      REFRESH_COOKIE_SECURE: "true"
+      REGISTRATION_ENABLED: "false"
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?Set the public origin, e.g. https://enterpriseflow.example.com}
+    # The API is reached through the frontend's nginx proxy only.
+    ports: !reset []
+    restart: unless-stopped
+
+  frontend:
+    ports: !override
+      - "8080:8080"
+    restart: unless-stopped

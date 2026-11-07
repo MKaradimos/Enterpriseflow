@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel superseded runs on the same branch to save minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: the workflow only reads the repository. No secrets are needed: tests generate their own
+# test-only keys, and Testcontainers starts a throwaway database.
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend (build & test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      # Unit tests + Testcontainers integration tests (GitHub-hosted runners provide Docker).
+      - name: Build and test
+        run: mvn -B -ntp verify
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: backend/target/surefire-reports/
+          retention-days: 7
+
+  frontend:
+    name: Frontend (lint, types, test, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Format check
+        run: npm run format:check
+      - name: Type check
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Production build
+        run: npm run build
+
+  docker:
+    name: Docker images
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      # Placeholder values only to satisfy compose interpolation; nothing is started or pushed.
+      - name: Build images
+        env:
+          POSTGRES_PASSWORD: ci-placeholder
+          JWT_SECRET: ci-placeholder
+        run: docker compose build

@@ -1,0 +1,99 @@
+spring:
+  application:
+    name: enterpriseflow
+  profiles:
+    default: dev
+
+  # All connection settings come from the environment; there are no credentials in source control.
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    # Flyway owns the schema. Hibernate only verifies that entities match it and fails fast if not.
+    hibernate:
+      ddl-auto: validate
+    # Disabling OSIV keeps DB access inside the service layer's transactions,
+    # so lazy-loading problems surface during development instead of in production.
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        # Turns "fetch join + pagination" (silently paginated in memory) into a hard error.
+        query:
+          fail_on_pagination_over_collection_fetch: true
+
+  data:
+    web:
+      pageable:
+        max-page-size: 100
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+server:
+  port: 8080
+  shutdown: graceful
+  error:
+    # Never expose stack traces or exception messages through the default error page.
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      # Public callers see only UP/DOWN; component details stay internal.
+      show-details: never
+      probes:
+        enabled: true
+  info:
+    build:
+      enabled: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+app:
+  cors:
+    # Comma-separated list. Only needed when the frontend is served from another origin.
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+  security:
+    jwt:
+      # No default on purpose: the application refuses to start without a key (see .env.example).
+      secret: ${JWT_SECRET}
+      issuer: ${JWT_ISSUER:enterpriseflow}
+      access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:15m}
+
+  auth:
+    registration-enabled: ${REGISTRATION_ENABLED:false}
+    refresh-token-ttl: ${REFRESH_TOKEN_TTL:7d}
+    refresh-cookie:
+      name: ef_refresh
+      secure: ${REFRESH_COOKIE_SECURE:true}
+
+  # Optional first admin for a fresh installation (ignored once an active admin exists).
+  bootstrap-admin:
+    email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+
+logging:
+  level:
+    root: INFO

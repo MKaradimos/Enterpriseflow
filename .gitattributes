@@ -1,0 +1,8 @@
+# Normalize line endings in the repository; check out with the platform default unless listed below.
+* text=auto
+
+# Shell scripts and Docker files run inside Linux (Git Bash, containers, CI) and break with CRLF endings.
+*.sh       text eol=lf
+Dockerfile text eol=lf
+*.yml      text eol=lf
+*.conf     text eol=lf

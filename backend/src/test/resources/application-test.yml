@@ -1,0 +1,16 @@
+# Test-only values. The key below is not a secret: it exists only in tests and is never used elsewhere.
+app:
+  security:
+    jwt:
+      secret: dGVzdC1vbmx5LWtleS10ZXN0LW9ubHkta2V5LXRlc3Qtb25seS1rZXktMDEyMzQ1Njc4OQ==
+      issuer: enterpriseflow-test
+      access-token-ttl: 5m
+  auth:
+    registration-enabled: true
+    refresh-cookie:
+      secure: false
+
+logging:
+  level:
+    com.enterpriseflow: INFO
+    org.testcontainers: WARN

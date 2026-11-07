@@ -1,0 +1,21 @@
+# Production: no defaults for connection settings. A missing variable must fail startup, not fall back silently.
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+app:
+  auth:
+    registration-enabled: false
+    refresh-cookie:
+      # HTTPS only. Not overridable here on purpose.
+      secure: true
+
+logging:
+  # JSON logs (Elastic Common Schema) for log aggregation; one event per line.
+  structured:
+    format:
+      console: ecs
+  level:
+    com.enterpriseflow: INFO

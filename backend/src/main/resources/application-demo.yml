@@ -1,0 +1,5 @@
+# Local demo only: seeds fictional users and data on an empty database (see DemoDataSeeder).
+# The application refuses to start if this profile is combined with prod.
+app:
+  demo:
+    password: ${DEMO_PASSWORD:Demo12345!}

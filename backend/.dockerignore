@@ -1,0 +1,7 @@
+target/
+.idea/
+*.iml
+.vscode/
+
+# Never copy local secrets into an image; configuration is passed at runtime.
+.env*

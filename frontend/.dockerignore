@@ -1,0 +1,6 @@
+node_modules
+dist
+coverage
+
+# Never copy local secrets into an image; configuration is passed at runtime.
+.env*

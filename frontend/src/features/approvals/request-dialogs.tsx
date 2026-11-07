@@ -21,6 +21,7 @@ import { formatCurrency } from '@/lib/format'
 import type { Project, Task } from '@/types/api'
 import { useSubmitApproval } from './api'
 
+// Every request needs a reason, so the reviewer knows why it was asked.
 const reasonField = z.string().trim().min(1, 'Explain the reason for the request').max(1000)
 
 const budgetSchema = z.object({
@@ -47,6 +48,7 @@ export function BudgetRequestDialog({
   } = useForm<z.infer<typeof budgetSchema>>({ resolver: zodResolver(budgetSchema) })
 
   useEffect(() => {
+    // Start from the current budget each time the dialog opens.
     if (open) reset({ budget: project.budget?.toString() ?? '', reason: '' })
   }, [open, project.budget, reset])
 

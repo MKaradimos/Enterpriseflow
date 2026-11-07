@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils'
 import type { Approval, ApprovalScope, ApprovalStatus } from '@/types/api'
 import { useApprovalDecision, useApprovals } from './api'
 
+// Each tab maps to a server-side scope; the server decides which requests belong to it.
 const tabs: { scope: ApprovalScope; label: string }[] = [
   { scope: 'TO_REVIEW', label: 'To review' },
   { scope: 'MINE', label: 'My requests' },
@@ -33,8 +34,11 @@ export function ApprovalsPage() {
   const page = Number(params.get('page') ?? 0)
   const { data, isPending, isError, error, refetch } = useApprovals({ scope, status, page })
   const decide = useApprovalDecision()
+  // The action the user clicked, waiting for confirmation in the dialog.
   const [pending, setPending] = useState<Pending | null>(null)
 
+  // Updates one filter in the URL. Changing any filter except the page itself goes back to the first page,
+  // because the old page number may not exist in the new result set.
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
@@ -129,6 +133,7 @@ export function ApprovalsPage() {
           pending?.action === 'cancel' ? undefined : { label: 'Comment', required: pending?.action === 'reject' }
         }
         onConfirm={(comment) => {
+          // Sends the confirmed decision. A comment is required for rejections (also enforced by the server).
           if (!pending) return
           decide.mutate(
             { id: pending.approval.id, action: pending.action, comment: comment || undefined },

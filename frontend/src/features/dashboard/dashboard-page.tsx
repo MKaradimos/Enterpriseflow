@@ -15,6 +15,7 @@ import { CountBarChart } from './count-bar-chart'
 /** Renders the dashboard sections from a single API response. */
 export function DashboardPage() {
   const { user } = useAuth()
+  // One request loads every section, so the numbers on the page are consistent with each other.
   const { data, isPending, isError, error, refetch } = useDashboard()
 
   return (
@@ -100,6 +101,7 @@ export function DashboardPage() {
 
             <Card>
               <CardHeader>
+                {/* The five most urgent overdue tasks, oldest due date first. */}
                 <CardTitle>Overdue tasks</CardTitle>
                 <CardDescription>Past their due date and not done</CardDescription>
               </CardHeader>
@@ -130,6 +132,7 @@ export function DashboardPage() {
           <div className="grid gap-4 lg:grid-cols-2">
             <Card>
               <CardHeader>
+                {/* Pending approvals this user can decide; empty for employees. */}
                 <CardTitle>Waiting for your review</CardTitle>
                 <CardDescription>Pending approvals you can decide</CardDescription>
               </CardHeader>
@@ -204,6 +207,7 @@ function Kpi({ icon: Icon, label, value, tone }: { icon: LucideIcon; label: stri
   )
 }
 
+/** Placeholder with the same layout as the dashboard, so the page does not jump when data arrives. */
 function DashboardSkeleton() {
   return (
     <div className="flex flex-col gap-4" role="status" aria-label="Loading dashboard">

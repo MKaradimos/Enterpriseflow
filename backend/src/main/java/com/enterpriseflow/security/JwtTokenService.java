@@ -60,6 +60,7 @@ public class JwtTokenService {
                 .getTokenValue();
     }
 
+    /** The configured issuer; tokens with any other issuer are rejected on validation. */
     public String issuer() {
         return properties.issuer();
     }

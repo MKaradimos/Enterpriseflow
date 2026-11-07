@@ -36,6 +36,8 @@ const allRoles: RoleName[] = ['ADMIN', 'MANAGER', 'EMPLOYEE']
 export function UsersPage() {
   const { user: me } = useAuth()
   const [params, setParams] = useSearchParams()
+  // Filters are kept in the URL (bookmarkable, survive reload). The search text is debounced so the API is
+  // called once the user stops typing, not on every keystroke.
   const [search, setSearch] = useState(params.get('q') ?? '')
   const q = useDebouncedValue(search, 300)
   const role = (params.get('role') ?? '') as RoleName | ''
@@ -43,11 +45,14 @@ export function UsersPage() {
   const page = Number(params.get('page') ?? 0)
   const { data, isPending, isError, error, refetch, isPlaceholderData } = useUsers({ q, role, active, page })
 
+  // Which dialog is open, and for which user.
   const [createOpen, setCreateOpen] = useState(false)
   const [rolesUser, setRolesUser] = useState<User | null>(null)
   const [statusUser, setStatusUser] = useState<User | null>(null)
   const updateStatus = useUpdateUserStatus()
 
+  // Updates one filter in the URL. Changing any filter except the page itself goes back to the first page,
+  // because the old page number may not exist in the new result set.
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
@@ -187,6 +192,7 @@ export function UsersPage() {
         destructive={statusUser?.active}
         pending={updateStatus.isPending}
         onConfirm={() => {
+          // Toggles the account. The server refuses to deactivate yourself or the last active admin.
           if (!statusUser) return
           updateStatus.mutate(
             { id: statusUser.id, active: !statusUser.active },
@@ -204,6 +210,7 @@ export function UsersPage() {
   )
 }
 
+// Same rules as the backend's CreateUserRequest; the server validates again.
 const createSchema = z.object({
   fullName: z.string().trim().min(1, 'Name is required').max(120),
   email: z.email('Enter a valid email address'),
@@ -226,6 +233,7 @@ function CreateUserDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
     if (open) reset({ fullName: '', email: '', jobTitle: '', password: '', role: 'EMPLOYEE' })
   }, [open, reset])
 
+  // The form picks one role; the API accepts a list, so it is wrapped in an array.
   const onSubmit = handleSubmit(async ({ role, ...values }) => {
     try {
       await create.mutateAsync({ ...values, jobTitle: values.jobTitle || undefined, roles: [role] })
@@ -303,6 +311,7 @@ function RolesForm({ user, onClose }: { user: User; onClose: () => void }) {
   const update = useUpdateRoles()
   const [roles, setRoles] = useState<RoleName[]>(user.roles)
 
+  // Adds or removes a role from the selection. At least one role is required (the save button is disabled otherwise).
   const toggle = (role: RoleName) =>
     setRoles((current) => (current.includes(role) ? current.filter((r) => r !== role) : [...current, role]))
 

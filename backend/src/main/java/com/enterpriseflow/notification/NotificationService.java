@@ -30,6 +30,7 @@ public class NotificationService {
         repository.save(new Notification(recipientId, type, title, message, referenceType, referenceId, clock.instant()));
     }
 
+    /** The recipient's notifications, optionally only the unread ones. */
     @Transactional(readOnly = true)
     public PageResponse<NotificationResponse> list(UUID recipientId, boolean unreadOnly, Pageable pageable) {
         var page = unreadOnly
@@ -38,11 +39,13 @@ public class NotificationService {
         return PageResponse.from(page, NotificationResponse::from);
     }
 
+    /** Count for the header badge; a cheap COUNT query because the UI polls it. */
     @Transactional(readOnly = true)
     public long unreadCount(UUID recipientId) {
         return repository.countByRecipientIdAndReadAtIsNull(recipientId);
     }
 
+    /** Marks one notification read. Looked up by id and recipient, so nobody can touch another user's notifications. */
     @Transactional
     public NotificationResponse markRead(UUID recipientId, UUID notificationId) {
         Notification notification = repository.findByIdAndRecipientId(notificationId, recipientId)
@@ -51,6 +54,7 @@ public class NotificationService {
         return NotificationResponse.from(notification);
     }
 
+    /** Marks every unread notification of the recipient as read in a single UPDATE; returns how many changed. */
     @Transactional
     public int markAllRead(UUID recipientId) {
         return repository.markAllRead(recipientId, clock.instant());

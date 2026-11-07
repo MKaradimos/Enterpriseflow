@@ -22,6 +22,7 @@ import { humanize, taskPriorities } from '@/lib/format'
 import type { Task } from '@/types/api'
 import { useCreateTask, useUpdateTask } from './api'
 
+// Same limits as the backend's task DTOs; the server validates again.
 const taskSchema = z.object({
   title: z.string().trim().min(1, 'Title is required').max(200),
   description: z.string().max(10000).optional(),
@@ -59,6 +60,7 @@ export function TaskFormDialog({
   } = useForm<Values>({ resolver: zodResolver(taskSchema) })
 
   useEffect(() => {
+    // Fill the form from the task when editing, or with defaults when creating, every time it opens.
     if (open) {
       reset({
         title: task?.title ?? '',

@@ -25,6 +25,7 @@ export function TasksPage() {
   const [search, setSearch] = useState(params.get('q') ?? '')
   const q = useDebouncedValue(search, 300)
 
+  // Every filter is read from the URL, so the current view can be bookmarked or shared.
   const filters = {
     q,
     status: (params.get('status') ?? '') as TaskStatus | '',
@@ -36,6 +37,8 @@ export function TasksPage() {
   }
   const { data, isPending, isError, error, refetch, isPlaceholderData } = useTasks(filters)
 
+  // Updates one filter in the URL. Changing any filter except the page itself goes back to the first page,
+  // because the old page number may not exist in the new result set.
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)

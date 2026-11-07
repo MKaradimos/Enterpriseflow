@@ -34,8 +34,10 @@ export function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema), defaultValues: { email: '', password: '' } })
 
+  // The page the user tried to open before being sent to login (set by RequireAuth).
   const from = (location.state as { from?: string } | null)?.from ?? '/'
 
+  // Already signed in (e.g. opened /login in a new tab): go straight on.
   if (status === 'authenticated') {
     return <Navigate to={from} replace />
   }

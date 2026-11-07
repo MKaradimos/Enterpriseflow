@@ -45,6 +45,8 @@ function TaskDetail({ task }: { task: Task }) {
   const [completionOpen, setCompletionOpen] = useState(false)
 
   // The server tells us which transitions this user may perform; the UI only offers those.
+  // Tasks that require approval cannot be moved to DONE directly; once IN_REVIEW, the assignee or the
+  // manager asks for approval instead.
   const canRequestCompletion =
     task.requiresApproval &&
     task.status === 'IN_REVIEW' &&
@@ -115,6 +117,7 @@ function TaskDetail({ task }: { task: Task }) {
             <CardTitle>Workflow</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
+            {/* One button per status the server allows this user to move the task to. */}
             {task.allowedStatuses.length === 0 && !canRequestCompletion ? (
               <p className="text-sm text-muted-foreground">
                 {task.archived ? 'This task is archived.' : 'You cannot change the status of this task.'}

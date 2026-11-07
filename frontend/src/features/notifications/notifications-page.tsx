@@ -28,6 +28,7 @@ export function NotificationsPage() {
   const markRead = useMarkRead()
   const navigate = useNavigate()
 
+  // Opening a notification marks it read and navigates to the item it is about.
   const open = (n: Notification) => {
     if (!n.read) markRead.mutate(n.id)
     if (n.referenceType && n.referenceId) navigate(referenceRoutes[n.referenceType](n.referenceId))

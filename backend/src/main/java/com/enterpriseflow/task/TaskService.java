@@ -62,6 +62,10 @@ public class TaskService {
 
     // ---- Queries ----------------------------------------------------------------------------------------
 
+    /**
+     * Task list with filters. When a project filter is given, access to that project is checked first, so a
+     * foreign project id returns 404, consistent with every other project endpoint.
+     */
     @Transactional(readOnly = true)
     public PageResponse<TaskResponse> search(CurrentUser user, TaskFilter filter, Pageable pageable) {
         if (filter.projectId() != null) {
@@ -73,6 +77,7 @@ public class TaskService {
                 task -> toResponse(task, user));
     }
 
+    /** One task, including which actions the caller may perform on it. */
     @Transactional(readOnly = true)
     public TaskResponse get(UUID taskId, CurrentUser user) {
         return toResponse(requireViewable(taskId, user), user);
@@ -91,6 +96,7 @@ public class TaskService {
 
     // ---- Commands ---------------------------------------------------------------------------------------
 
+    /** Creates a task in a project the caller manages, optionally assigned, and notifies the assignee. */
     @Transactional
     public TaskResponse create(UUID projectId, CurrentUser actor, CreateTaskRequest request) {
         Project project = access.requireManageable(projectId, actor);
@@ -109,6 +115,10 @@ public class TaskService {
         return toResponse(task, actor);
     }
 
+    /**
+     * Updates the task. A change of assignee gets its own audit entry and a notification, because "who is
+     * responsible" is the change people most often need to trace.
+     */
     @Transactional
     public TaskResponse update(UUID taskId, CurrentUser actor, UpdateTaskRequest request) {
         Task task = requireEditable(taskId, actor);
@@ -134,6 +144,11 @@ public class TaskService {
         return toResponse(task, actor);
     }
 
+    /**
+     * Moves the task through its workflow. The assignee may progress their own work, but reopening a DONE task is
+     * reserved for the project manager, so completed work cannot be silently undone. Invalid transitions are
+     * rejected by the entity.
+     */
     @Transactional
     public TaskResponse changeStatus(UUID taskId, CurrentUser actor, TaskStatus target) {
         Task task = requireViewable(taskId, actor);
@@ -155,6 +170,7 @@ public class TaskService {
         return toResponse(task, actor);
     }
 
+    /** Soft-deletes a task; it keeps its history and approval records. */
     @Transactional
     public void archive(UUID taskId, CurrentUser actor) {
         Task task = requireEditable(taskId, actor);
@@ -174,6 +190,7 @@ public class TaskService {
 
     // ---- Helpers ----------------------------------------------------------------------------------------
 
+    /** Loads a task whose project the caller manages; editing a task is a management action. */
     private Task requireEditable(UUID taskId, CurrentUser actor) {
         Task task = requireViewable(taskId, actor);
         if (!access.canManage(task.getProject(), actor)) {
@@ -182,6 +199,10 @@ public class TaskService {
         return task;
     }
 
+    /**
+     * Validates the assignee: must be active and a member of the project. Otherwise a task could be given to
+     * someone who cannot even see it.
+     */
     private User resolveAssignee(Project project, UUID assigneeId) {
         if (assigneeId == null) {
             return null;
@@ -196,6 +217,7 @@ public class TaskService {
         return assignee;
     }
 
+    /** Notifies the new assignee, unless they assigned the task to themselves. */
     private void notifyAssignment(Task task, User assignee, CurrentUser actor) {
         if (assignee != null && !assignee.getId().equals(actor.id())) {
             notificationService.notify(assignee.getId(), NotificationType.TASK_ASSIGNED, "New task assigned",
@@ -204,6 +226,10 @@ public class TaskService {
         }
     }
 
+    /**
+     * Maps to the API response, including {@code canEdit} and the statuses the caller may move the task to.
+     * DONE is left out for tasks that require approval, because those reach DONE only through an approved request.
+     */
     TaskResponse toResponse(Task task, CurrentUser user) {
         Project project = task.getProject();
         boolean canManage = access.canManage(project, user);

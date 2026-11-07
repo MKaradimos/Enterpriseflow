@@ -47,10 +47,12 @@ function ProjectDetail({ project }: { project: NonNullable<ReturnType<typeof use
   const [archiveOpen, setArchiveOpen] = useState(false)
   const archive = useProjectAction(project.id, 'archive')
   const restore = useProjectAction(project.id, 'restore')
+  // The project's tasks (newest first) and its audit history, loaded in parallel with the project.
   const tasks = useTasks({ projectId: project.id, page: 0, size: 50, sort: 'createdAt,desc' })
   const activity = useProjectActivity(project.id)
 
   const archived = project.status === 'ARCHIVED'
+  // canManage comes from the server; archived projects are read-only for everyone.
   const canEdit = project.canManage && !archived
 
   return (
@@ -73,6 +75,7 @@ function ProjectDetail({ project }: { project: NonNullable<ReturnType<typeof use
                 </Button>
               </>
             )}
+            {/* Only administrators can bring an archived project back. */}
             {archived && isAdmin && (
               <Button
                 variant="outline"

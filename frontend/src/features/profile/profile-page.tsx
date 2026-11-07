@@ -37,6 +37,7 @@ export function ProfilePage() {
   const updateProfile = useUpdateProfile()
   const changePassword = useChangePassword()
 
+  // Two independent forms, each with its own validation and submit state.
   const profileForm = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     values: { fullName: user?.fullName ?? '', jobTitle: user?.jobTitle ?? '' },
@@ -46,6 +47,7 @@ export function ProfilePage() {
     defaultValues: { currentPassword: '', newPassword: '', confirm: '' },
   })
 
+  // Rendered only inside protected routes, so the user is normally always present.
   if (!user) return null
 
   const saveProfile = profileForm.handleSubmit(async (values) => {

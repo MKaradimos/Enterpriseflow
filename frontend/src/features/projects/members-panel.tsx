@@ -18,6 +18,7 @@ import { useAddMember, useProjectMembers, useRemoveMember } from './api'
 export function MembersPanel({ project }: { project: Project }) {
   const members = useProjectMembers(project.id)
   const remove = useRemoveMember(project.id)
+  // Member waiting for removal confirmation.
   const [toRemove, setToRemove] = useState<ProjectMember | null>(null)
   const canEdit = project.canManage && project.status !== 'ARCHIVED'
 
@@ -36,6 +37,7 @@ export function MembersPanel({ project }: { project: Project }) {
             </div>
             <div className="flex items-center gap-2">
               {m.manager && <Badge variant="accent">Manager</Badge>}
+              {/* The manager cannot be removed from their own project (also enforced by the server). */}
               {canEdit && !m.manager && (
                 <Button variant="ghost" size="icon" aria-label={`Remove ${m.fullName}`} onClick={() => setToRemove(m)}>
                   <UserMinus />
@@ -73,6 +75,7 @@ export function MembersPanel({ project }: { project: Project }) {
 function AddMember({ projectId, existing }: { projectId: string; existing: string[] }) {
   const [query, setQuery] = useState('')
   const q = useDebouncedValue(query.trim(), 250)
+  // Search starts after two characters; users already in the team are filtered out of the results.
   const lookup = useUserLookup(q, q.length >= 2)
   const add = useAddMember(projectId)
   const candidates = (lookup.data ?? []).filter((u) => !existing.includes(u.id))

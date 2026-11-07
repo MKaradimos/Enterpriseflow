@@ -36,6 +36,8 @@ export function ProjectsPage() {
     page,
   })
 
+  // Updates one filter in the URL. Changing any filter except the page itself goes back to the first page,
+  // because the old page number may not exist in the new result set.
   const updateParam = (key: string, value: string) => {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
